@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard KPI Kinerja Branch</title>
     
+    <!-- Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -15,15 +16,20 @@
         .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
         .chart-wrapper { position: relative; width: 100%; height: 300px; transition: height 0.3s ease; }
         .chart-wrapper.compact { height: 190px; }
+        
+        /* Scrollbar Styling */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Rank Buttons */
         .rank-btn { transition: all 0.2s; }
         .rank-btn.active { background-color: #1e293b; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .rank-btn:not(.active):hover { background-color: #e2e8f0; }
-        .footer { text-align: center; padding: 10px; font-size: 0.75rem; color: var(--text-muted); margin-top: -35px; }
 
+        /* Footer & Loading */
+        .footer { text-align: center; padding: 10px; font-size: 0.75rem; color: var(--text-muted); margin-top: -35px; }
         #loadingOverlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(255,255,255,0.95); z-index: 9999;
@@ -36,6 +42,7 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        /* Database Dropdown */
         #dbDropdown:not(.hidden) { animation: dropIn 0.2s ease-out; }
         @keyframes dropIn { from { opacity: 0; transform: scale(0.95) translateY(-5px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         .db-meta { font-size: 10px; line-height: 1.4; color: #64748b; margin-top: 2px; }
@@ -48,15 +55,16 @@
     <!-- Loading Screen -->
     <div id="loadingOverlay">
         <div class="loader"></div>
-        <p class="text-slate-600 font-semibold text-lg" id="loadingText">Memuat Data...</p>
+        <p class="text-slate-600 font-semibold text-lg text-center px-4" id="loadingText">Memuat Data...</p>
     </div>
 
     <!-- Navbar -->
     <nav class="bg-slate-900 text-white shadow-lg sticky top-0 z-50">
         <div class="container mx-auto px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-3">
             <div class="flex items-center space-x-3">
-                <div class="bg-white-600 p-2 rounded-lg">
-                    <img src="img/BMI.png" alt="Logo" width="40" height="40">
+                <div class="bg-white p-2 rounded-lg">
+                    <!-- Placeholder Logo -->
+                    <i class="fa-solid fa-chart-line text-blue-600 text-2xl w-10 h-10 flex items-center justify-center"></i>
                 </div>
                 <div>
                     <h1 class="text-lg font-bold tracking-wide">BRANCH KPI MONITORING</h1>
@@ -357,7 +365,7 @@
         }
 
         // ==========================================
-        // SISTEM DATABASE SELECTOR
+        // SISTEM DATABASE SELECTOR & AUTO-FIND
         // ==========================================
         function renderDbList() {
             const container = document.getElementById('dbListContainer');
@@ -389,7 +397,25 @@
             renderDbList();
 
             try {
-                const res = await fetch(config.file);
+                // 1. Coba load file sesuai konfigurasi
+                let res = await fetch(config.file);
+                
+                // 2. Jika 404, coba variasi penulisan (Case Sensitive Fix)
+                if (!res.ok) {
+                    console.warn(`File ${config.file} not found. Trying variations...`);
+                    const variations = [
+                        config.file.toUpperCase(), // JUNI.JSON
+                        config.file.toLowerCase(), // juni.json
+                        config.file.charAt(0).toUpperCase() + config.file.slice(1), // Juni.json
+                        config.file.replace('.json', '.JSON')
+                    ];
+                    
+                    for (let v of variations) {
+                        res = await fetch(v);
+                        if (res.ok) break;
+                    }
+                }
+
                 if (!res.ok) throw new Error(`File ${config.file} tidak ditemukan (HTTP ${res.status})`);
                 
                 const jsonData = await res.json();
@@ -397,8 +423,15 @@
                 
             } catch (err) {
                 console.error("Load JSON Error:", err);
-                alert(`ERROR memuat ${config.label}:\n${err.message}\n\nPastikan file ${config.file} ada di folder yang sama.`);
-                document.getElementById('loadingOverlay').style.display = 'none';
+                // Tampilkan error di overlay alih-alih alert biasa agar lebih rapi
+                document.getElementById('loadingText').innerHTML = `
+                    <span class="text-red-500 font-bold">ERROR: ${err.message}</span><br>
+                    <span class="text-xs text-gray-500 mt-2 block max-w-xs text-center">
+                        Pastikan file ada di root folder repository.<br>
+                        Cek penulisan huruf besar/kecil nama file.
+                    </span>
+                `;
+                // Jangan hide overlay agar user bisa baca errornya
             }
         }
 
@@ -413,28 +446,41 @@
         // CORE DATA PROCESSING
         // ==========================================
         function processData(data) {
-            const cleanData = data.filter(row => row.name && row.name.trim() !== '');
+            // Filter baris kosong dan bersihkan key yang memiliki spasi (misal "name ")
+            const cleanData = data.filter(row => {
+                // Cari key 'name' baik itu "name" maupun "name "
+                const nameKey = Object.keys(row).find(k => k.trim() === 'name');
+                return nameKey && row[nameKey] && row[nameKey].toString().trim() !== '';
+            });
 
-            rawData = cleanData.map(row => ({
-                name: row.name.trim(),
-                pbt: parseID(row.pbt),
-                tgtPbt: parseID(row.tgtPbt),
-                asset: parseID(row.asset),
-                tgtAsset: parseID(row.tgtAsset),
-                gapAsset: parseID(row.gapAsset),
-                casaPct: parseID(row.casaPct) * 100, 
-                actCasa: parseID(row.actCasa),
-                gapCasa: parseID(row.gapCasa),
-                cof: parseID(row.cof) * 100, 
-                fdrPct: parseID(row.fdrPct) * 100, 
-                actFunding: parseID(row.actFunding),
-                actFinancing: parseID(row.actFinancing),
-                gapFinancing: parseID(row.gapFinancing),
-                fbi: parseID(row.fbi),
-                tgtFbi: parseID(row.tgtFbi),
-                gapFbi: parseID(row.gapFbi),
-                ppap: parseID(row.ppap) * 100 
-            }));
+            rawData = cleanData.map(row => {
+                // Helper untuk mengambil value berdasarkan key yang mungkin punya spasi
+                const getVal = (key) => {
+                    const actualKey = Object.keys(row).find(k => k.trim() === key);
+                    return actualKey ? row[actualKey] : null;
+                };
+
+                return {
+                    name: getVal('name')?.toString().trim() || 'Unknown',
+                    pbt: parseID(getVal('pbt')),
+                    tgtPbt: parseID(getVal('tgtPbt')),
+                    asset: parseID(getVal('asset')),
+                    tgtAsset: parseID(getVal('tgtAsset')),
+                    gapAsset: parseID(getVal('gapAsset')),
+                    casaPct: parseID(getVal('casaPct')) * 100, 
+                    actCasa: parseID(getVal('actCasa')),
+                    gapCasa: parseID(getVal('gapCasa')),
+                    cof: parseID(getVal('cof')) * 100, 
+                    fdrPct: parseID(getVal('fdrPct')) * 100, 
+                    actFunding: parseID(getVal('actFunding')),
+                    actFinancing: parseID(getVal('actFinancing')),
+                    gapFinancing: parseID(getVal('gapFinancing')),
+                    fbi: parseID(getVal('fbi')),
+                    tgtFbi: parseID(getVal('tgtFbi')),
+                    gapFbi: parseID(getVal('gapFbi')),
+                    ppap: parseID(getVal('ppap')) * 100 
+                };
+            });
 
             initFilter();
             updateDashboard('ALL');
@@ -843,4 +889,4 @@
         });
     </script>
 </body>
-</html> 
+</html>
