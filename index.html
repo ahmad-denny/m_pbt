@@ -22,8 +22,8 @@
         .rank-btn { transition: all 0.2s; }
         .rank-btn.active { background-color: #1e293b; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .rank-btn:not(.active):hover { background-color: #e2e8f0; }
-        .footer { text-align: center; padding: 10px; font-size: 0.75rem; color: var(--text-muted); margin-top: -35px; }
-
+        .footer { text-align: center; padding: 10px; font-size: 0.75rem; color: var(--text-muted); margin-top: -25px; }
+        
         #loadingOverlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(255,255,255,0.95); z-index: 9999;
@@ -85,7 +85,7 @@
 
                 <!-- Branch Filter -->
                 <div class="flex items-center bg-slate-800 rounded-lg p-1 border border-slate-700">
-                    <label class="text-xs font-semibold text-slate-400 px-3 uppercase hidden sm:block">Select Branch:</label>
+                    <label class="text-xs font-semibold text-slate-400 px-3 uppercase hidden sm:block">Branch:</label>
                     <select id="branchFilter" class="bg-slate-900 text-white text-sm rounded-md border-none focus:ring-2 focus:ring-blue-500 py-1.5 px-3 outline-none cursor-pointer min-w-[180px]">
                         <option value="ALL">📊 All Branches</option>
                     </select>
@@ -311,14 +311,16 @@
         </div>
     </div>
     
-    <div class="footer">Typing, Create, Update, Repeat | Optimized for Mobile & Web | Theme: Light/Dark | RBPM - Region Sumatera</div>
+    <div class="footer">RBPM - Region Sumatera | Optimized for Mobile & Web</div>
 
     <script>
         // ==========================================
         // KONFIGURASI DATABASE JSON
         // ==========================================
         const jsonFiles = [
-            { id: 'juni', label: 'Juni 2026', file: 'juni.json', meta: '<i class="fas fa-calendar-alt"></i> Contribution Margin | Per: 30 Juni 2026' },
+            { id: 'juli', label: 'Juli 2026', file: 'juli.json', meta: '<i class="fas fa-calendar-alt"></i> Per: 31 Juli 2026 | <i class="fas fa-briefcase"></i> Workdays: 23' },
+            { id: 'juni', label: 'Juni 2026', file: 'juni.json', meta: '<i class="fas fa-calendar-alt"></i> Per: 30 Juni 2026 | <i class="fas fa-briefcase"></i> Workdays: 20' },
+            { id: 'mei', label: 'Mei 2026', file: 'mei.json', meta: '<i class="fas fa-calendar-alt"></i> Per: 29 Mei 2026 | <i class="fas fa-briefcase"></i> Workdays: 16' }            
         ];
 
         let currentActiveJson = null;
