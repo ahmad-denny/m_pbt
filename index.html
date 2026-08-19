@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard KPI Kinerja Branch - Fixed CSV</title>
+    <title>Dashboard KPI Kinerja Branch - Dynamic CSV</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -45,6 +45,11 @@
             animation: spin 1s linear infinite; margin-bottom: 15px;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Database Dropdown Animation */
+        #dbDropdown { transform-origin: top right; }
+        #dbDropdown:not(.hidden) { animation: dropIn 0.2s ease-out; }
+        @keyframes dropIn { from { opacity: 0; transform: scale(0.95) translateY(-5px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     </style>
 </head>
 <body class="text-gray-800">
@@ -52,8 +57,8 @@
     <!-- Loading Screen -->
     <div id="loadingOverlay">
         <div class="loader"></div>
-        <p class="text-slate-600 font-semibold text-lg">Memproses Data CSV...</p>
-        <p class="text-xs text-red-500 mt-2 font-bold">PENTING: Gunakan Live Server / Localhost</p>
+        <p class="text-slate-600 font-semibold text-lg" id="loadingText">Memuat Daftar Database...</p>
+        <p class="text-xs text-red-500 mt-2 font-bold">PENTING: Jalankan python server.py terlebih dahulu</p>
     </div>
 
     <!-- Navbar -->
@@ -64,18 +69,41 @@
                     <img src="img/BMI.png" alt="Bank Muamalat Logo" class="logo" width="40" height="40">
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-wide">                                               
-                        BRANCH KPI MONITORING
-                    </h1>
+                    <h1 class="text-lg font-bold tracking-wide">BRANCH KPI MONITORING</h1>
                     <p class="text-xs text-slate-400">PBT • Asset • CASA • FDR • FBI • PPAP</p>
                 </div>
             </div>
             
-            <div class="flex items-center bg-slate-800 rounded-lg p-1 border border-slate-700">
-                <label class="text-xs font-semibold text-slate-400 px-3 uppercase">Select Branch:</label>
-                <select id="branchFilter" class="bg-slate-900 text-white text-sm rounded-md border-none focus:ring-2 focus:ring-blue-500 py-1.5 px-3 outline-none cursor-pointer min-w-[200px]">
-                    <option value="ALL">📊 All Branches (AGGREGATE)</option>
-                </select>
+            <!-- DATABASE SELECTOR & BRANCH FILTER -->
+            <div class="flex items-center gap-3 w-full md:w-auto flex-wrap justify-end">
+                
+                <!-- Database Selector Dropdown -->
+                <div class="relative group">
+                    <button id="dbBtn" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-sm transition-all min-w-[220px] justify-between">
+                        <span id="activeDbName" class="truncate max-w-[160px]">📁 Pilih Database CSV</span>
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
+                    </button>
+                    
+                    <div id="dbDropdown" class="hidden absolute right-0 top-full mt-1 w-72 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-[60]">
+                        <div class="p-2 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
+                            <span class="text-xs font-bold text-gray-500 uppercase px-2">Available Databases</span>
+                            <button onclick="loadFileList()" class="text-blue-600 hover:text-blue-800 text-xs font-bold px-2 py-1 rounded hover:bg-blue-50 transition">
+                                <i class="fa-solid fa-rotate-right"></i> Refresh
+                            </button>
+                        </div>
+                        <div id="dbListContainer" class="max-h-64 overflow-y-auto p-1">
+                            <div class="p-4 text-center text-xs text-gray-400">Klik tombol untuk scan folder...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Branch Filter -->
+                <div class="flex items-center bg-slate-800 rounded-lg p-1 border border-slate-700">
+                    <label class="text-xs font-semibold text-slate-400 px-3 uppercase hidden sm:block">Branch:</label>
+                    <select id="branchFilter" class="bg-slate-900 text-white text-sm rounded-md border-none focus:ring-2 focus:ring-blue-500 py-1.5 px-3 outline-none cursor-pointer min-w-[180px]">
+                        <option value="ALL">📊 All Branches (AGGREGATE)</option>
+                    </select>
+                </div>
             </div>
         </div>
     </nav>
@@ -137,10 +165,8 @@
                         <h3 class="text-lg font-extrabold mt-0.5 text-slate-800" id="avgCASA">-</h3>
                         <div class="mt-1 pt-1 border-t border-dashed border-gray-200 flex justify-between items-center">
                             <div>
-                                <div class="text-[9px] font-bold text-gray-400 uppercase">COF (≤2.3%)<br><span class="text-sm font-extrabold text-slate-700 " id="avgCOF" >-</span>
+                                <div class="text-[9px] font-bold text-gray-400 uppercase">COF (≤2.3%)<br><span class="text-sm font-extrabold text-slate-700" id="avgCOF">-</span>
                                     <span id="cofIndicator" class="text-xs"></span>
-                                </div>
-                                <div class="flex items-baseline gap-1">
                                 </div>
                             </div>
                         </div>
@@ -291,9 +317,6 @@
         <div id="tableSection" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-10">
             <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                 <h3 class="text-base font-bold text-slate-700">Detail Data Breakdown</h3>
-                <!--
-                <div class="text-xs text-gray-500">Display data based on the selected filter</div>
-                -->
             </div>
             <div class="overflow-x-auto max-h-[400px]">
                 <table class="w-full text-left border-collapse">
@@ -322,6 +345,7 @@
             </div>
         </div>
     </div>
+    
     <div class="footer">Typing, Create, Update, Repeat | Optimized for Mobile & Web | Theme: Light/Dark | RBPM - Region Sumatera</div>
 
     <script>
@@ -329,107 +353,135 @@
         let charts = {};
         let currentMode = 'ALL'; 
         let chartRanks = { pbt: 'ALL', asset: 'ALL', casa: 'ALL', fdr: 'ALL', fbi: 'ALL' };
+        let activeFile = '';
 
         // --- FUNGSI UTAMA: PARSE ANGKA INDONESIA ---
-        // Input: "40,1085871" atau "1.200,50" -> Output: 40.1085871 atau 1200.50
         function parseID(val) {
             if (!val || val.toString().trim() === '') return 0;
-            // 1. Hapus spasi
             let str = val.toString().trim();
-            // 2. Hapus titik ribuan (.)
             str = str.replace(/\./g, '');
-            // 3. Ganti koma desimal (,) jadi titik (.)
             str = str.replace(',', '.');
-            
             let num = parseFloat(str);
             return isNaN(num) ? 0 : num;
         }
 
-        // --- LOAD CSV ---
-        function loadCSV() {
-            // Cek apakah dijalankan via file:// atau http://
-            if (window.location.protocol === 'file:') {
-                console.warn("Running on file protocol. CORS might block CSV loading.");
-            }
-
-            fetch('juni2026.csv')
-                .then(response => {
-                    if (!response.ok) throw new Error("File juni2026.csv tidak ditemukan");
-                    return response.text();
-                })
-                .then(csvText => {
-                    Papa.parse(csvText, {
-                        delimiter: ";", 
-                        header: true, // Penting: baca baris pertama sebagai key object
-                        skipEmptyLines: true,
-                        complete: function(results) {
-                            processData(results.data);
-                        },
-                        error: function(err) {
-                            console.error("Parse Error:", err);
-                            alert("Gagal memparse CSV.");
-                            document.getElementById('loadingOverlay').style.display = 'none';
-                        }
-                    });
-                })
-                .catch(err => {
-                    console.error("Fetch Error:", err);
-                    alert("ERROR: Gagal memuat file CSV.\n\nJika Anda membuka file HTML ini dengan double-click, browser akan memblokir akses data demi keSecuredan.\n\nSOLUSI:\n1. Gunakan extension 'Live Server' di VS Code.\n2. Atau jalankan via localhost (XAMPP/Python http server).");
-                    document.getElementById('loadingOverlay').style.display = 'none';
+        // ==========================================
+        // SISTEM DATABASE SELECTOR BARU
+        // ==========================================
+        
+        async function loadFileList() {
+            const container = document.getElementById('dbListContainer');
+            container.innerHTML = '<div class="p-4 text-center text-xs text-gray-400"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Scanning folder...</div>';
+            
+            try {
+                const res = await fetch('/api/list-csv');
+                if (!res.ok) throw new Error(`Server responded ${res.status}`);
+                const data = await res.json();
+                
+                if (!data.files || data.files.length === 0) {
+                    container.innerHTML = '<div class="p-4 text-center text-xs text-red-400">Tidak ada file CSV ditemukan di folder server.</div>';
+                    return;
+                }
+                
+                container.innerHTML = '';
+                data.files.forEach(file => {
+                    const btn = document.createElement('button');
+                    const isActive = activeFile === file;
+                    btn.className = `w-full text-left px-3 py-2.5 rounded-lg text-sm hover:bg-blue-50 transition-all flex items-center gap-2 mb-0.5 ${isActive ? 'bg-blue-100 text-blue-800 font-bold' : 'text-gray-700'}`;
+                    btn.innerHTML = `<i class="fa-solid fa-file-csv text-green-600"></i> <span class="truncate">${file}</span>`;
+                    btn.onclick = () => selectDatabase(file);
+                    container.appendChild(btn);
                 });
+            } catch (err) {
+                console.error("Load file list error:", err);
+                container.innerHTML = `<div class="p-4 text-center text-xs text-red-500 leading-relaxed">
+                    ❌ Gagal terhubung ke server.<br>
+                    Pastikan <b>server.py</b> berjalan.<br>
+                    <code class="bg-gray-100 px-1.5 py-0.5 rounded text-[10px]">python server.py</code>
+                </div>`;
+            }
         }
 
+        async function selectDatabase(filename) {
+            activeFile = filename;
+            document.getElementById('activeDbName').textContent = `📊 ${filename}`;
+            document.getElementById('dbDropdown').classList.add('hidden');
+            
+            // Update loading text
+            document.getElementById('loadingText').textContent = `Memproses ${filename}...`;
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            
+            try {
+                const res = await fetch(`/api/csv/${encodeURIComponent(filename)}`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}: File tidak ditemukan`);
+                const csvText = await res.text();
+                
+                Papa.parse(csvText, {
+                    delimiter: ";", 
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        processData(results.data);
+                    },
+                    error: function(err) {
+                        console.error("Parse Error:", err);
+                        alert(`Gagal memparse ${filename}: ${err.message}`);
+                        document.getElementById('loadingOverlay').style.display = 'none';
+                    }
+                });
+            } catch (err) {
+                console.error("Fetch CSV Error:", err);
+                alert(`ERROR memuat ${filename}:\n${err.message}`);
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+        }
+
+        // Dropdown toggle logic
+        document.getElementById('dbBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            const dd = document.getElementById('dbDropdown');
+            const isHidden = dd.classList.contains('hidden');
+            dd.classList.toggle('hidden');
+            if (isHidden) loadFileList();
+        });
+        
+        document.addEventListener('click', () => {
+            document.getElementById('dbDropdown').classList.add('hidden');
+        });
+        document.getElementById('dbDropdown').addEventListener('click', (e) => e.stopPropagation());
+
+        // ==========================================
+        // CORE DATA PROCESSING (EXISTING LOGIC)
+        // ==========================================
+
         function processData(data) {
-            // Filter baris sampah (misal baris terakhir yang kosong atau cuma angka)
             const cleanData = data.filter(row => row.name && row.name.trim() !== '' && !row.name.includes(';;;'));
 
-            rawData = cleanData.map(row => {
-                // Konversi semua string ke number dengan logic parseID
-                // Khusus untuk Persentase (casaPct, cof, fdrPct, ppap), data di CSV adalah desimal (0,57).
-                // Dashboard mengharapkan angka bulat persen (57). Maka kita kali 100.
-                
-                return {
-                    name: row.name.trim(),
-                    pbt: parseID(row.pbt),
-                    tgtPbt: parseID(row.tgtPbt),
-                    asset: parseID(row.asset),
-                    tgtAsset: parseID(row.tgtAsset),
-                    gapAsset: parseID(row.gapAsset),
-                    
-                    // Rasio dikali 100 agar jadi persen (0.57 -> 57)
-                    casaPct: parseID(row.casaPct) * 100, 
-                    actCasa: parseID(row.actCasa),
-                    gapCasa: parseID(row.gapCasa),
-                    
-                    // COF juga desimal di CSV (0.022 -> 2.2%)
-                    cof: parseID(row.cof) * 100, 
-                    
-                    // FDR desimal (0.19 -> 19%)
-                    fdrPct: parseID(row.fdrPct) * 100, 
-                    
-                    actFunding: parseID(row.actFunding),
-                    actFinancing: parseID(row.actFinancing),
-                    gapFinancing: parseID(row.gapFinancing),
-                    fbi: parseID(row.fbi),
-                    tgtFbi: parseID(row.tgtFbi),
-                    gapFbi: parseID(row.gapFbi),
-                    
-                    // PPAP desimal (1 -> 100%? atau 0.01 -> 1%?)
-                    // Melihat data: "1" di CSV Banda Aceh. Di dashboard lama "100.0".
-                    // Jika CSV "1" artinya 100%, maka * 100.
-                    // Jika CSV "0,002" artinya 0.2%, maka * 100.
-                    ppap: parseID(row.ppap) * 100 
-                };
-            });
+            rawData = cleanData.map(row => ({
+                name: row.name.trim(),
+                pbt: parseID(row.pbt),
+                tgtPbt: parseID(row.tgtPbt),
+                asset: parseID(row.asset),
+                tgtAsset: parseID(row.tgtAsset),
+                gapAsset: parseID(row.gapAsset),
+                casaPct: parseID(row.casaPct) * 100, 
+                actCasa: parseID(row.actCasa),
+                gapCasa: parseID(row.gapCasa),
+                cof: parseID(row.cof) * 100, 
+                fdrPct: parseID(row.fdrPct) * 100, 
+                actFunding: parseID(row.actFunding),
+                actFinancing: parseID(row.actFinancing),
+                gapFinancing: parseID(row.gapFinancing),
+                fbi: parseID(row.fbi),
+                tgtFbi: parseID(row.tgtFbi),
+                gapFbi: parseID(row.gapFbi),
+                ppap: parseID(row.ppap) * 100 
+            }));
 
             initFilter();
             updateDashboard('ALL');
             document.getElementById('loadingOverlay').style.display = 'none';
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            loadCSV();
-        });
 
         function initFilter() {
             const select = document.getElementById('branchFilter');
@@ -513,7 +565,6 @@
                     chartRanks[key] = 'ALL';
                     updateRankButtons(key);
                 });
-                
             } else {
                 chartsGrid.className = "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6 transition-all duration-300";
                 wrappers.forEach(w => w.classList.add('compact'));
@@ -532,7 +583,7 @@
         }
 
         function updateCards(data) {
-            const fmt = (n) => new Intl.NumberFormat('id-ID').format(Math.round(n)); // Round untuk tampilan card agar rapi
+            const fmt = (n) => new Intl.NumberFormat('id-ID').format(Math.round(n));
             const isAggregate = currentMode === 'ALL';
             
             const totalPBT = data.reduce((a,b) => a + b.pbt, 0);
@@ -542,7 +593,6 @@
             const totalTgtAsset = data.reduce((a,b) => a + b.tgtAsset, 0);
             const totalGapAsset = data.reduce((a,b) => a + b.gapAsset, 0);
             
-            // Average untuk rasio
             const avgCASA = (data.reduce((a,b) => a + b.casaPct, 0) / data.length).toFixed(1);
             const avgCOF = (data.reduce((a,b) => a + b.cof, 0) / data.length).toFixed(2);
             
@@ -552,7 +602,6 @@
             const totalActFinancing = data.reduce((a,b) => a + b.actFinancing, 0);
             const totalGapFinancing = data.reduce((a,b) => a + b.gapFinancing, 0);
             
-            // Hitung FDR Aggregate manual dari total funding/financing
             const calcFDR = totalActFunding > 0 ? ((totalActFinancing / totalActFunding) * 100).toFixed(1) : "0.0";
             
             const totalFBI = data.reduce((a,b) => a + b.fbi, 0);
@@ -579,7 +628,6 @@
             
             document.getElementById('avgCOF').innerText = avgCOF + '%';
             const cofInd = document.getElementById('cofIndicator');
-            // Threshold COF 2.3%
             if(parseFloat(avgCOF) <= 2.30) {
                 cofInd.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
                 document.getElementById('avgCOF').className = "text-sm font-extrabold text-green-700";
@@ -618,12 +666,10 @@
                 document.getElementById('cntAssetNo').innerText = data.length - assetOk;
                 document.getElementById('iconAsset').innerHTML = totalAsset >= totalTgtAsset ? '<i class="fa-solid fa-circle-check text-green-500"></i>' : '<i class="fa-solid fa-circle-exclamation text-red-400"></i>';
 
-                // Threshold CASA 60%
                 const casaOk = data.filter(d => d.casaPct >= 60).length;
                 document.getElementById('cntCasaOk').innerText = casaOk;
                 document.getElementById('cntCasaNo').innerText = data.length - casaOk;
                 
-                // Threshold COF 2.3%
                 const cofOk = data.filter(d => d.cof <= 2.30).length;
                 document.getElementById('cntCofOk').innerText = cofOk;
                 document.getElementById('cntCofNo').innerText = data.length - cofOk;
@@ -631,7 +677,6 @@
                 document.getElementById('iconCASA').innerHTML = parseFloat(avgCASA) >= 60 ? '<i class="fa-solid fa-circle-check text-green-500"></i>' : '<i class="fa-solid fa-circle-exclamation text-orange-400"></i>';
                 document.getElementById('casaIndicator').innerHTML = document.getElementById('iconCASA').innerHTML;
 
-                // Threshold FDR 30%
                 const fdrOk = data.filter(d => d.fdrPct >= 30).length;
                 document.getElementById('cntFdrOk').innerText = fdrOk;
                 document.getElementById('cntFdrNo').innerText = data.length - fdrOk;
@@ -642,7 +687,6 @@
                 document.getElementById('cntFbiNo').innerText = data.length - fbiOk;
                 document.getElementById('iconFBI').innerHTML = totalFBI >= totalTgtFBI ? '<i class="fa-solid fa-circle-check text-green-500"></i>' : '<i class="fa-solid fa-circle-exclamation text-red-400"></i>';
 
-                // Threshold PPAP 1%
                 const ppapOk = data.filter(d => d.ppap <= 1).length;
                 document.getElementById('cntPpapOk').innerText = ppapOk;
                 document.getElementById('cntPpapNo').innerText = data.length - ppapOk;
@@ -655,6 +699,8 @@
 
             } else {
                 const d = data[0];
+                if (!d) return;
+                
                 document.getElementById('iconPBT').innerHTML = d.pbt >= d.tgtPbt ? '<i class="fa-solid fa-circle-check text-green-500"></i>' : '<i class="fa-solid fa-circle-exclamation text-red-400"></i>';
                 document.getElementById('iconAsset').innerHTML = d.asset >= d.tgtAsset ? '<i class="fa-solid fa-circle-check text-green-500"></i>' : '<i class="fa-solid fa-circle-exclamation text-red-400"></i>';
                 
@@ -713,6 +759,9 @@
             });
         }
 
+        // ==========================================
+        // CHART.JS SMART LABELS PLUGIN
+        // ==========================================
         const smartLabelsPlugin = {
             id: 'smartLabels',
             afterDatasetsDraw(chart) {
@@ -799,6 +848,9 @@
             }
         };
 
+        // ==========================================
+        // CHART RENDERING FUNCTIONS
+        // ==========================================
         function renderAllCharts(fullData) {
             ['pbt', 'asset', 'casa', 'fdr', 'fbi'].forEach(id => renderSingleChart(id, fullData));
         }
@@ -811,9 +863,7 @@
             const isAggregateAll = (currentMode === 'ALL' && data.length > 10);
             
             const getLegendColor = (dataset) => {
-                if (dataset.label && dataset.label.toUpperCase().includes('GAP')) {
-                    return '#ef4444';
-                }
+                if (dataset.label && dataset.label.toUpperCase().includes('GAP')) return '#ef4444';
                 if (dataset.borderColor) return dataset.borderColor;
                 if (typeof dataset.backgroundColor === 'string') return dataset.backgroundColor;
                 return '#000';
@@ -908,10 +958,7 @@
                         ...commonOptions,
                         scales: {
                             x: commonOptions.scales.x,
-                            y: { 
-                                type: 'linear', position: 'left', 
-                                ticks: { font: {size: 8}, callback: formatYAxis } 
-                            },
+                            y: { type: 'linear', position: 'left', ticks: { font: {size: 8}, callback: formatYAxis } },
                             y1: { type: 'linear', display: !isSingle, position: 'right', min: 0, max: 100, grid: { drawOnChartArea: false }, ticks: {font:{size: 8}} }
                         }
                     },
@@ -933,17 +980,8 @@
                         ...commonOptions,
                         scales: {
                             x: commonOptions.scales.x,
-                            y: { 
-                                type: 'linear', position: 'left', 
-                                title: { display: false }, 
-                                ticks: { font: {size: 8}, callback: formatYAxis } 
-                            },
-                            y1: { 
-                                type: 'linear', position: 'right', min: 0, max: 100,
-                                title: { display: false },
-                                grid: { drawOnChartArea: false }, 
-                                ticks: { callback: v => v + '%', font:{size: 8} }
-                            }
+                            y: { type: 'linear', position: 'left', title: { display: false }, ticks: { font: {size: 8}, callback: formatYAxis } },
+                            y1: { type: 'linear', position: 'right', min: 0, max: 100, title: { display: false }, grid: { drawOnChartArea: false }, ticks: { callback: v => v + '%', font:{size: 8} } }
                         }
                     },
                     plugins: [smartLabelsPlugin]
@@ -958,6 +996,30 @@
                 charts.fbi = new Chart(document.getElementById('fbiChart'), { type: 'bar', data: { labels, datasets }, options: commonOptions, plugins: [smartLabelsPlugin] });
             }
         }
+
+        // ==========================================
+        // INITIALIZATION
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Auto-load file list dan pilih file pertama jika tersedia
+            (async () => {
+                try {
+                    const res = await fetch('/api/list-csv');
+                    const data = await res.json();
+                    if (data.files && data.files.length > 0) {
+                        selectDatabase(data.files[0]);
+                    } else {
+                        document.getElementById('loadingText').textContent = 'Tidak ada file CSV ditemukan';
+                        setTimeout(() => {
+                            document.getElementById('loadingOverlay').style.display = 'none';
+                        }, 2000);
+                    }
+                } catch (err) {
+                    document.getElementById('loadingText').textContent = 'Server tidak tersedia. Jalankan python server.py';
+                    // Jangan hide overlay agar user tahu ada masalah
+                }
+            })();
+        });
     </script>
 </body>
 </html>
