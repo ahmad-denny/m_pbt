@@ -98,15 +98,15 @@
                 <div class="flex items-center space-x-3">
                     <div class="bg-white-600 p-2 rounded-lg"><img src="img/BMI.png" alt="Bank Muamalat Logo" class="logo" width="35" height="35"></div>
                     <div>
-                        <h1 class="text-lg font-bold tracking-wide">BRANCH KPI MONITORING</h1>
-                        <span id="headerSubtitle" style="font-size: 13px;font-weight: bold">
+                        <h1 class="text-lg font-bold tracking-wide">CONTRIBUTION MARGIN [JUNI 2026]</h1>
+                        <span id="headerSubtitle" class="text-sm font-bold text-slate-400 px3 ">
                         <p class="text-xs text-slate-400">Contribution Margin [ Juni 2026 ] | PBT After HOCA • Asset • CASA Ratio • FDR • FBI • PPAP</p>
                     </div>
                 </div>            
                 <div class="flex items-center bg-slate-800 rounded-lg p-1 border border-slate-700">
                     <label class="text-xs font-semibold text-slate-400 px-3 uppercase">SELECT BRANCH:</label>
                     <select id="branchFilter" class="bg-slate-900 text-white text-sm rounded-md border-none focus:ring-2 focus:ring-blue-500 py-1.5 px-3 outline-none cursor-pointer min-w-[200px]">
-                        <option value="ALL">📊 ALL BRANCH (AGGREGATE)</option>
+                        <option value="ALL">📊 REGION SUMATERA</option>
                     </select>
                 </div>
             </div>
@@ -992,9 +992,9 @@
             const subtitleEl = document.getElementById('headerSubtitle');
             
             if (brVal=='ALL') {
-                subtitleEl.innerText = "REGION SUMATERA - Contribution Margin [ Juni 2026 ]";
+                subtitleEl.innerText = "REGION SUMATERA";
             } else {
-                subtitleEl.innerText = brVal + " - Contribution Margin [ Juni 2026 ]";
+                subtitleEl.innerText = brVal;
             }
         }
 
