@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard KPI Kinerja Branch - Dynamic CSV</title>
+    <title>Dashboard KPI Kinerja Cabang - Fixed CSV</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -19,8 +19,8 @@
         .card { transition: all 0.3s ease; }
         .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
         
-        .chart-wrapper { position: relative; width: 100%; height: 300px; transition: height 0.3s ease; }
-        .chart-wrapper.compact { height: 190px; }
+        .chart-wrapper { position: relative; width: 100%; height: 400px; transition: height 0.3s ease; }
+        .chart-wrapper.compact { height: 240px; }
 
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
@@ -30,8 +30,6 @@
         .rank-btn { transition: all 0.2s; }
         .rank-btn.active { background-color: #1e293b; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .rank-btn:not(.active):hover { background-color: #e2e8f0; }
-
-        .footer { text-align: center; padding: 10px; font-size: 0.75rem; color: var(--text-muted); margin-top: -25px; }
         
         /* Loading Overlay */
         #loadingOverlay {
@@ -45,11 +43,6 @@
             animation: spin 1s linear infinite; margin-bottom: 15px;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* Database Dropdown Animation */
-        #dbDropdown { transform-origin: top right; }
-        #dbDropdown:not(.hidden) { animation: dropIn 0.2s ease-out; }
-        @keyframes dropIn { from { opacity: 0; transform: scale(0.95) translateY(-5px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     </style>
 </head>
 <body class="text-gray-800">
@@ -57,53 +50,26 @@
     <!-- Loading Screen -->
     <div id="loadingOverlay">
         <div class="loader"></div>
-        <p class="text-slate-600 font-semibold text-lg" id="loadingText">Memuat Daftar Database...</p>
-        <p class="text-xs text-red-500 mt-2 font-bold">PENTING: Jalankan python server.py terlebih dahulu</p>
+        <p class="text-slate-600 font-semibold text-lg">Memproses Data CSV...</p>
+        <p class="text-xs text-red-500 mt-2 font-bold">PENTING: Gunakan Live Server / Localhost</p>
     </div>
 
     <!-- Navbar -->
     <nav class="bg-slate-900 text-white shadow-lg sticky top-0 z-50">
         <div class="container mx-auto px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-3">
             <div class="flex items-center space-x-3">
-                <div class="bg-white-600 p-2 rounded-lg">
-                    <img src="img/BMI.png" alt="Bank Muamalat Logo" class="logo" width="40" height="40">
-                </div>
+                <div class="bg-blue-600 p-2 rounded-lg"><i class="fa-solid fa-chart-line text-xl"></i></div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-wide">BRANCH KPI MONITORING</h1>
+                    <h1 class="text-lg font-bold tracking-wide">MONITORING KPI CABANG</h1>
                     <p class="text-xs text-slate-400">PBT • Asset • CASA • FDR • FBI • PPAP</p>
                 </div>
             </div>
             
-            <!-- DATABASE SELECTOR & BRANCH FILTER -->
-            <div class="flex items-center gap-3 w-full md:w-auto flex-wrap justify-end">
-                
-                <!-- Database Selector Dropdown -->
-                <div class="relative group">
-                    <button id="dbBtn" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-sm transition-all min-w-[220px] justify-between">
-                        <span id="activeDbName" class="truncate max-w-[160px]">📁 Pilih Database CSV</span>
-                        <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
-                    </button>
-                    
-                    <div id="dbDropdown" class="hidden absolute right-0 top-full mt-1 w-72 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-[60]">
-                        <div class="p-2 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
-                            <span class="text-xs font-bold text-gray-500 uppercase px-2">Available Databases</span>
-                            <button onclick="loadFileList()" class="text-blue-600 hover:text-blue-800 text-xs font-bold px-2 py-1 rounded hover:bg-blue-50 transition">
-                                <i class="fa-solid fa-rotate-right"></i> Refresh
-                            </button>
-                        </div>
-                        <div id="dbListContainer" class="max-h-64 overflow-y-auto p-1">
-                            <div class="p-4 text-center text-xs text-gray-400">Klik tombol untuk scan folder...</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Branch Filter -->
-                <div class="flex items-center bg-slate-800 rounded-lg p-1 border border-slate-700">
-                    <label class="text-xs font-semibold text-slate-400 px-3 uppercase hidden sm:block">Branch:</label>
-                    <select id="branchFilter" class="bg-slate-900 text-white text-sm rounded-md border-none focus:ring-2 focus:ring-blue-500 py-1.5 px-3 outline-none cursor-pointer min-w-[180px]">
-                        <option value="ALL">📊 All Branches (AGGREGATE)</option>
-                    </select>
-                </div>
+            <div class="flex items-center bg-slate-800 rounded-lg p-1 border border-slate-700">
+                <label class="text-xs font-semibold text-slate-400 px-3 uppercase">Filter Cabang:</label>
+                <select id="branchFilter" class="bg-slate-900 text-white text-sm rounded-md border-none focus:ring-2 focus:ring-blue-500 py-1.5 px-3 outline-none cursor-pointer min-w-[200px]">
+                    <option value="ALL">📊 SEMUA CABANG (AGGREGATE)</option>
+                </select>
             </div>
         </div>
     </nav>
@@ -124,11 +90,11 @@
                     <div class="p-1.5 bg-indigo-50 rounded-full text-indigo-600"><i class="fa-solid fa-coins text-sm"></i></div>
                 </div>
                 <div class="mt-2 pt-2 border-t border-gray-100 text-[10px]">
-                    <div class="flex justify-between mb-0.5"><span class="text-gray-500">Target:</span><span id="targetPBT" class="font-bold">-</span></div>
-                    <div class="flex justify-between"><span class="text-gray-500">GAP:</span><span id="gapPBT" class="font-bold">-</span></div>
+                    <div class="flex justify-between mb-0.5"><span class="text-gray-500">Target:</span><span id="targetPBT" class="font-semibold">-</span></div>
+                    <div class="flex justify-between"><span class="text-gray-500">Gap:</span><span id="gapPBT" class="font-bold">-</span></div>
                     <div id="countPBT" class="mt-1.5 pt-1.5 border-t border-dashed border-gray-200 hidden">
-                        <div class="flex justify-between"><span class="text-green-600">✅ Achieved</span> <span id="cntPbtOk" class="font-bold">0</span></div>
-                        <div class="flex justify-between"><span class="text-red-500">⚠️ Failed</span> <span id="cntPbtNo" class="font-bold">0</span></div>
+                        <div class="flex justify-between"><span class="text-green-600">✅ Tercapai</span> <span id="cntPbtOk" class="font-bold">0</span></div>
+                        <div class="flex justify-between"><span class="text-red-500">⚠️ Belum</span> <span id="cntPbtNo" class="font-bold">0</span></div>
                     </div>
                 </div>
             </div>
@@ -138,17 +104,17 @@
                 <div class="absolute top-3 right-3 text-xl" id="iconAsset"></div>
                 <div class="flex justify-between items-start pr-8">
                     <div>
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Asset Total</p>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Total Asset</p>
                         <h3 class="text-lg font-extrabold mt-0.5 text-slate-800" id="sumAsset">-</h3>
                     </div>
                     <div class="p-1.5 bg-blue-50 rounded-full text-blue-600"><i class="fa-solid fa-building-columns text-sm"></i></div>
                 </div>
                 <div class="mt-2 pt-2 border-t border-gray-100 text-[10px]">
-                    <div class="flex justify-between mb-0.5"><span class="text-gray-500">Target:</span><span id="targetAsset" class="font-bold">-</span></div>
-                    <div class="flex justify-between"><span class="text-gray-500">GAP:</span><span id="gapAsset" class="font-bold">-</span></div>
+                    <div class="flex justify-between mb-0.5"><span class="text-gray-500">Target:</span><span id="targetAsset" class="font-semibold">-</span></div>
+                    <div class="flex justify-between"><span class="text-gray-500">Gap:</span><span id="gapAsset" class="font-bold">-</span></div>
                     <div id="countAsset" class="mt-1.5 pt-1.5 border-t border-dashed border-gray-200 hidden">
-                        <div class="flex justify-between"><span class="text-green-600">✅ Achieved</span> <span id="cntAssetOk" class="font-bold">0</span></div>
-                        <div class="flex justify-between"><span class="text-red-500">⚠️ Failed</span> <span id="cntAssetNo" class="font-bold">0</span></div>
+                        <div class="flex justify-between"><span class="text-green-600">✅ Tercapai</span> <span id="cntAssetOk" class="font-bold">0</span></div>
+                        <div class="flex justify-between"><span class="text-red-500">⚠️ Belum</span> <span id="cntAssetNo" class="font-bold">0</span></div>
                     </div>
                 </div>
             </div>
@@ -165,7 +131,9 @@
                         <h3 class="text-lg font-extrabold mt-0.5 text-slate-800" id="avgCASA">-</h3>
                         <div class="mt-1 pt-1 border-t border-dashed border-gray-200 flex justify-between items-center">
                             <div>
-                                <div class="text-[9px] font-bold text-gray-400 uppercase">COF (≤2.3%)<br><span class="text-sm font-extrabold text-slate-700" id="avgCOF">-</span>
+                                <p class="text-[9px] font-bold text-gray-400 uppercase">COF (≤2.3%)</p>
+                                <div class="flex items-baseline gap-1">
+                                    <span class="text-sm font-extrabold text-slate-700" id="avgCOF">-</span>
                                     <span id="cofIndicator" class="text-xs"></span>
                                 </div>
                             </div>
@@ -173,8 +141,8 @@
                     </div>
                 </div>
                 <div class="mt-2 pt-2 border-t border-gray-100 text-[10px]">
-                    <div class="flex justify-between mb-0.5"><span class="text-gray-500">Actual Amount:</span><span id="actCasaAmt" class="font-bold text-slate-700">-</span></div>
-                    <div class="flex justify-between"><span class="text-gray-500">GAP Amount:</span><span id="gapCasaAmt" class="font-bold">-</span></div>
+                    <div class="flex justify-between mb-0.5"><span class="text-gray-500">Act Amt:</span><span id="actCasaAmt" class="font-semibold text-slate-700">-</span></div>
+                    <div class="flex justify-between"><span class="text-gray-500">Gap Amt:</span><span id="gapCasaAmt" class="font-bold">-</span></div>
                     <div id="countCASA" class="mt-1.5 pt-1.5 border-t border-dashed border-gray-200 hidden">
                         <div class="flex justify-between"><span class="text-green-600">✅ CASA ≥60%</span> <span id="cntCasaOk" class="font-bold">0</span></div>
                         <div class="flex justify-between"><span class="text-red-500">⚠️ <60%</span> <span id="cntCasaNo" class="font-bold">0</span></div>
@@ -189,14 +157,14 @@
                 <div class="absolute top-3 right-3 text-xl" id="iconFDR"></div>
                 <div class="flex justify-between items-start pr-8">
                     <div>
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">FDR</p>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">FDR Position</p>
                         <h3 class="text-lg font-extrabold mt-0.5 text-slate-800" id="avgFDR">-</h3>
                     </div>
                     <div class="p-1.5 bg-violet-50 rounded-full text-violet-600"><i class="fa-solid fa-money-bill-transfer text-sm"></i></div>
                 </div>
                 <div class="mt-2 pt-2 border-t border-gray-100 text-[10px]">
-                    <div class="flex justify-between mb-0.5"><span class="text-gray-500">Financing:</span><span id="actFinancing" class="font-bold text-slate-700">-</span></div>
-                    <div class="flex justify-between"><span class="text-gray-500">GAP Financing:</span><span id="gapFinancing" class="font-bold">-</span></div>
+                    <div class="flex justify-between mb-0.5"><span class="text-gray-500">Financing:</span><span id="actFinancing" class="font-semibold text-slate-700">-</span></div>
+                    <div class="flex justify-between"><span class="text-gray-500">Gap Fin:</span><span id="gapFinancing" class="font-bold">-</span></div>
                     <div id="countFDR" class="mt-1.5 pt-1.5 border-t border-dashed border-gray-200 hidden">
                         <div class="flex justify-between"><span class="text-green-600">✅ FDR ≥30%</span> <span id="cntFdrOk" class="font-bold">0</span></div>
                         <div class="flex justify-between"><span class="text-orange-500">⚠️ <30%</span> <span id="cntFdrNo" class="font-bold">0</span></div>
@@ -209,17 +177,17 @@
                 <div class="absolute top-3 right-3 text-xl" id="iconFBI"></div>
                 <div class="flex justify-between items-start pr-8">
                     <div>
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Fee Based Income</p>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Fee Based Inc</p>
                         <h3 class="text-lg font-extrabold mt-0.5 text-slate-800" id="sumFBI">-</h3>
                     </div>
                     <div class="p-1.5 bg-amber-50 rounded-full text-amber-600"><i class="fa-solid fa-briefcase text-sm"></i></div>
                 </div>
                 <div class="mt-2 pt-2 border-t border-gray-100 text-[10px]">
-                    <div class="flex justify-between mb-0.5"><span class="text-gray-500">Target:</span><span id="targetFBI" class="font-bold">-</span></div>
-                    <div class="flex justify-between"><span class="text-gray-500">GAP:</span><span id="gapFBI" class="font-bold">-</span></div>
+                    <div class="flex justify-between mb-0.5"><span class="text-gray-500">Target:</span><span id="targetFBI" class="font-semibold">-</span></div>
+                    <div class="flex justify-between"><span class="text-gray-500">Gap:</span><span id="gapFBI" class="font-bold">-</span></div>
                     <div id="countFBI" class="mt-1.5 pt-1.5 border-t border-dashed border-gray-200 hidden">
-                        <div class="flex justify-between"><span class="text-green-600">✅ Achieved</span> <span id="cntFbiOk" class="font-bold">0</span></div>
-                        <div class="flex justify-between"><span class="text-red-500">⚠️ Failed</span> <span id="cntFbiNo" class="font-bold">0</span></div>
+                        <div class="flex justify-between"><span class="text-green-600">✅ Tercapai</span> <span id="cntFbiOk" class="font-bold">0</span></div>
+                        <div class="flex justify-between"><span class="text-red-500">⚠️ Belum</span> <span id="cntFbiNo" class="font-bold">0</span></div>
                     </div>
                 </div>
             </div>
@@ -237,8 +205,8 @@
                 <div class="mt-2 pt-2 border-t border-gray-100">
                      <span id="statusPPAP" class="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-500 block text-center">-</span>
                      <div id="countPPAP" class="mt-1.5 pt-1.5 border-t border-dashed border-gray-200 text-[10px] hidden">
-                        <div class="flex justify-between"><span class="text-green-600">✅ Secured (<1%)</span> <span id="cntPpapOk" class="font-bold">0</span></div>
-                        <div class="flex justify-between"><span class="text-red-500">⚠️ Alert (>1%)</span> <span id="cntPpapNo" class="font-bold">0</span></div>
+                        <div class="flex justify-between"><span class="text-green-600">✅ Aman (<1%)</span> <span id="cntPpapOk" class="font-bold">0</span></div>
+                        <div class="flex justify-between"><span class="text-red-500">⚠️ Waspad (>1%)</span> <span id="cntPpapNo" class="font-bold">0</span></div>
                     </div>
                 </div>
             </div>
@@ -250,7 +218,7 @@
             <!-- PBT -->
             <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 gap-1">
-                    <h3 class="text-sm font-bold text-slate-700">Profit Before Tax After HOCA</h3>
+                    <h3 class="text-sm font-bold text-slate-700">Profit Before Tax (PBT)</h3>
                     <div id="ctrl-pbt" class="hidden bg-gray-100 rounded-lg p-0.5 flex text-[10px] font-medium">
                         <button onclick="setChartRank('pbt', 'TOP')" class="rank-btn px-2 py-0.5 rounded text-slate-600">Top 10</button>
                         <button onclick="setChartRank('pbt', 'BOTTOM')" class="rank-btn px-2 py-0.5 rounded text-slate-600">Bottom 10</button>
@@ -263,7 +231,7 @@
             <!-- Asset -->
             <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 gap-1">
-                    <h3 class="text-sm font-bold text-slate-700">Asset Performance</h3>
+                    <h3 class="text-sm font-bold text-slate-700">Kinerja Asset (Rp Juta)</h3>
                     <div id="ctrl-asset" class="hidden bg-gray-100 rounded-lg p-0.5 flex text-[10px] font-medium">
                         <button onclick="setChartRank('asset', 'TOP')" class="rank-btn px-2 py-0.5 rounded text-slate-600">Top 10</button>
                         <button onclick="setChartRank('asset', 'BOTTOM')" class="rank-btn px-2 py-0.5 rounded text-slate-600">Bottom 10</button>
@@ -276,7 +244,7 @@
             <!-- CASA -->
             <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 gap-1">
-                    <h3 class="text-sm font-bold text-slate-700">CASA Analysis</h3>
+                    <h3 class="text-sm font-bold text-slate-700">Analisis CASA</h3>
                     <div id="ctrl-casa" class="hidden bg-gray-100 rounded-lg p-0.5 flex text-[10px] font-medium">
                         <button onclick="setChartRank('casa', 'TOP')" class="rank-btn px-2 py-0.5 rounded text-slate-600">Top 10</button>
                         <button onclick="setChartRank('casa', 'BOTTOM')" class="rank-btn px-2 py-0.5 rounded text-slate-600">Bottom 10</button>
@@ -289,7 +257,7 @@
             <!-- FDR -->
             <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 gap-1">
-                    <h3 class="text-sm font-bold text-slate-700">Financing to Deposit Ratio</h3>
+                    <h3 class="text-sm font-bold text-slate-700">Pembiayaan & Rasio FDR</h3>
                     <div id="ctrl-fdr" class="hidden bg-gray-100 rounded-lg p-0.5 flex text-[10px] font-medium">
                         <button onclick="setChartRank('fdr', 'TOP')" class="rank-btn px-2 py-0.5 rounded text-slate-600">Top 10</button>
                         <button onclick="setChartRank('fdr', 'BOTTOM')" class="rank-btn px-2 py-0.5 rounded text-slate-600">Bottom 10</button>
@@ -316,13 +284,14 @@
         <!-- Detailed Data Table -->
         <div id="tableSection" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-10">
             <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                <h3 class="text-base font-bold text-slate-700">Detail Data Breakdown</h3>
+                <h3 class="text-base font-bold text-slate-700">Detail Data Kinerja</h3>
+                <div class="text-xs text-gray-500">Menampilkan data sesuai filter terpilih</div>
             </div>
             <div class="overflow-x-auto max-h-[400px]">
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-white sticky top-0 z-10 shadow-sm">
                         <tr class="text-gray-500 text-xs uppercase tracking-wider border-b border-gray-200">
-                            <th class="p-3 font-bold sticky left-0 bg-white z-20">Branch Name</th>
+                            <th class="p-3 font-bold sticky left-0 bg-white z-20">Cabang</th>
                             <th class="p-3 font-bold text-right">PBT Act</th>
                             <th class="p-3 font-bold text-right">PBT Tgt</th>
                             <th class="p-3 font-bold text-right text-red-500">Gap PBT</th>
@@ -337,151 +306,122 @@
                             <th class="p-3 font-bold text-right">Gap Financing</th>
                             <th class="p-3 font-bold text-right">FBI Act</th>
                             <th class="p-3 font-bold text-right">Gap FBI</th>
-                            <th class="p-3 font-bold text-center">PPAP/<br>YTD</th>
+                            <th class="p-3 font-bold text-center">PPAP/YTD</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody" class="text-xs divide-y divide-gray-100"></tbody>
                 </table>
             </div>
         </div>
+
     </div>
-    
-    <div class="footer">Typing, Create, Update, Repeat | Optimized for Mobile & Web | Theme: Light/Dark | RBPM - Region Sumatera</div>
 
     <script>
         let rawData = [];
         let charts = {};
         let currentMode = 'ALL'; 
         let chartRanks = { pbt: 'ALL', asset: 'ALL', casa: 'ALL', fdr: 'ALL', fbi: 'ALL' };
-        let activeFile = '';
 
         // --- FUNGSI UTAMA: PARSE ANGKA INDONESIA ---
+        // Input: "40,1085871" atau "1.200,50" -> Output: 40.1085871 atau 1200.50
         function parseID(val) {
             if (!val || val.toString().trim() === '') return 0;
+            // 1. Hapus spasi
             let str = val.toString().trim();
+            // 2. Hapus titik ribuan (.)
             str = str.replace(/\./g, '');
+            // 3. Ganti koma desimal (,) jadi titik (.)
             str = str.replace(',', '.');
+            
             let num = parseFloat(str);
             return isNaN(num) ? 0 : num;
         }
 
-        // ==========================================
-        // SISTEM DATABASE SELECTOR BARU
-        // ==========================================
-        
-        async function loadFileList() {
-            const container = document.getElementById('dbListContainer');
-            container.innerHTML = '<div class="p-4 text-center text-xs text-gray-400"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Scanning folder...</div>';
-            
-            try {
-                const res = await fetch('/api/list-csv');
-                if (!res.ok) throw new Error(`Server responded ${res.status}`);
-                const data = await res.json();
-                
-                if (!data.files || data.files.length === 0) {
-                    container.innerHTML = '<div class="p-4 text-center text-xs text-red-400">Tidak ada file CSV ditemukan di folder server.</div>';
-                    return;
-                }
-                
-                container.innerHTML = '';
-                data.files.forEach(file => {
-                    const btn = document.createElement('button');
-                    const isActive = activeFile === file;
-                    btn.className = `w-full text-left px-3 py-2.5 rounded-lg text-sm hover:bg-blue-50 transition-all flex items-center gap-2 mb-0.5 ${isActive ? 'bg-blue-100 text-blue-800 font-bold' : 'text-gray-700'}`;
-                    btn.innerHTML = `<i class="fa-solid fa-file-csv text-green-600"></i> <span class="truncate">${file}</span>`;
-                    btn.onclick = () => selectDatabase(file);
-                    container.appendChild(btn);
-                });
-            } catch (err) {
-                console.error("Load file list error:", err);
-                container.innerHTML = `<div class="p-4 text-center text-xs text-red-500 leading-relaxed">
-                    ❌ Gagal terhubung ke server.<br>
-                    Pastikan <b>server.py</b> berjalan.<br>
-                    <code class="bg-gray-100 px-1.5 py-0.5 rounded text-[10px]">python server.py</code>
-                </div>`;
+        // --- LOAD CSV ---
+        function loadCSV() {
+            // Cek apakah dijalankan via file:// atau http://
+            if (window.location.protocol === 'file:') {
+                console.warn("Running on file protocol. CORS might block CSV loading.");
             }
-        }
 
-        async function selectDatabase(filename) {
-            activeFile = filename;
-            document.getElementById('activeDbName').textContent = `📊 ${filename}`;
-            document.getElementById('dbDropdown').classList.add('hidden');
-            
-            // Update loading text
-            document.getElementById('loadingText').textContent = `Memproses ${filename}...`;
-            document.getElementById('loadingOverlay').style.display = 'flex';
-            
-            try {
-                const res = await fetch(`/api/csv/${encodeURIComponent(filename)}`);
-                if (!res.ok) throw new Error(`HTTP ${res.status}: File tidak ditemukan`);
-                const csvText = await res.text();
-                
-                Papa.parse(csvText, {
-                    delimiter: ";", 
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: function(results) {
-                        processData(results.data);
-                    },
-                    error: function(err) {
-                        console.error("Parse Error:", err);
-                        alert(`Gagal memparse ${filename}: ${err.message}`);
-                        document.getElementById('loadingOverlay').style.display = 'none';
-                    }
+            fetch('juni2026.csv')
+                .then(response => {
+                    if (!response.ok) throw new Error("File juni2026.csv tidak ditemukan");
+                    return response.text();
+                })
+                .then(csvText => {
+                    Papa.parse(csvText, {
+                        delimiter: ";", 
+                        header: true, // Penting: baca baris pertama sebagai key object
+                        skipEmptyLines: true,
+                        complete: function(results) {
+                            processData(results.data);
+                        },
+                        error: function(err) {
+                            console.error("Parse Error:", err);
+                            alert("Gagal memparse CSV.");
+                            document.getElementById('loadingOverlay').style.display = 'none';
+                        }
+                    });
+                })
+                .catch(err => {
+                    console.error("Fetch Error:", err);
+                    alert("ERROR: Gagal memuat file CSV.\n\nJika Anda membuka file HTML ini dengan double-click, browser akan memblokir akses data demi keamanan.\n\nSOLUSI:\n1. Gunakan extension 'Live Server' di VS Code.\n2. Atau jalankan via localhost (XAMPP/Python http server).");
+                    document.getElementById('loadingOverlay').style.display = 'none';
                 });
-            } catch (err) {
-                console.error("Fetch CSV Error:", err);
-                alert(`ERROR memuat ${filename}:\n${err.message}`);
-                document.getElementById('loadingOverlay').style.display = 'none';
-            }
         }
-
-        // Dropdown toggle logic
-        document.getElementById('dbBtn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            const dd = document.getElementById('dbDropdown');
-            const isHidden = dd.classList.contains('hidden');
-            dd.classList.toggle('hidden');
-            if (isHidden) loadFileList();
-        });
-        
-        document.addEventListener('click', () => {
-            document.getElementById('dbDropdown').classList.add('hidden');
-        });
-        document.getElementById('dbDropdown').addEventListener('click', (e) => e.stopPropagation());
-
-        // ==========================================
-        // CORE DATA PROCESSING (EXISTING LOGIC)
-        // ==========================================
 
         function processData(data) {
+            // Filter baris sampah (misal baris terakhir yang kosong atau cuma angka)
             const cleanData = data.filter(row => row.name && row.name.trim() !== '' && !row.name.includes(';;;'));
 
-            rawData = cleanData.map(row => ({
-                name: row.name.trim(),
-                pbt: parseID(row.pbt),
-                tgtPbt: parseID(row.tgtPbt),
-                asset: parseID(row.asset),
-                tgtAsset: parseID(row.tgtAsset),
-                gapAsset: parseID(row.gapAsset),
-                casaPct: parseID(row.casaPct) * 100, 
-                actCasa: parseID(row.actCasa),
-                gapCasa: parseID(row.gapCasa),
-                cof: parseID(row.cof) * 100, 
-                fdrPct: parseID(row.fdrPct) * 100, 
-                actFunding: parseID(row.actFunding),
-                actFinancing: parseID(row.actFinancing),
-                gapFinancing: parseID(row.gapFinancing),
-                fbi: parseID(row.fbi),
-                tgtFbi: parseID(row.tgtFbi),
-                gapFbi: parseID(row.gapFbi),
-                ppap: parseID(row.ppap) * 100 
-            }));
+            rawData = cleanData.map(row => {
+                // Konversi semua string ke number dengan logic parseID
+                // Khusus untuk Persentase (casaPct, cof, fdrPct, ppap), data di CSV adalah desimal (0,57).
+                // Dashboard mengharapkan angka bulat persen (57). Maka kita kali 100.
+                
+                return {
+                    name: row.name.trim(),
+                    pbt: parseID(row.pbt),
+                    tgtPbt: parseID(row.tgtPbt),
+                    asset: parseID(row.asset),
+                    tgtAsset: parseID(row.tgtAsset),
+                    gapAsset: parseID(row.gapAsset),
+                    
+                    // Rasio dikali 100 agar jadi persen (0.57 -> 57)
+                    casaPct: parseID(row.casaPct) * 100, 
+                    actCasa: parseID(row.actCasa),
+                    gapCasa: parseID(row.gapCasa),
+                    
+                    // COF juga desimal di CSV (0.022 -> 2.2%)
+                    cof: parseID(row.cof) * 100, 
+                    
+                    // FDR desimal (0.19 -> 19%)
+                    fdrPct: parseID(row.fdrPct) * 100, 
+                    
+                    actFunding: parseID(row.actFunding),
+                    actFinancing: parseID(row.actFinancing),
+                    gapFinancing: parseID(row.gapFinancing),
+                    fbi: parseID(row.fbi),
+                    tgtFbi: parseID(row.tgtFbi),
+                    gapFbi: parseID(row.gapFbi),
+                    
+                    // PPAP desimal (1 -> 100%? atau 0.01 -> 1%?)
+                    // Melihat data: "1" di CSV Banda Aceh. Di dashboard lama "100.0".
+                    // Jika CSV "1" artinya 100%, maka * 100.
+                    // Jika CSV "0,002" artinya 0.2%, maka * 100.
+                    ppap: parseID(row.ppap) * 100 
+                };
+            });
 
             initFilter();
             updateDashboard('ALL');
             document.getElementById('loadingOverlay').style.display = 'none';
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCSV();
+        });
 
         function initFilter() {
             const select = document.getElementById('branchFilter');
@@ -565,6 +505,7 @@
                     chartRanks[key] = 'ALL';
                     updateRankButtons(key);
                 });
+                
             } else {
                 chartsGrid.className = "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6 transition-all duration-300";
                 wrappers.forEach(w => w.classList.add('compact'));
@@ -583,7 +524,7 @@
         }
 
         function updateCards(data) {
-            const fmt = (n) => new Intl.NumberFormat('id-ID').format(Math.round(n));
+            const fmt = (n) => new Intl.NumberFormat('id-ID').format(Math.round(n)); // Round untuk tampilan card agar rapi
             const isAggregate = currentMode === 'ALL';
             
             const totalPBT = data.reduce((a,b) => a + b.pbt, 0);
@@ -593,6 +534,7 @@
             const totalTgtAsset = data.reduce((a,b) => a + b.tgtAsset, 0);
             const totalGapAsset = data.reduce((a,b) => a + b.gapAsset, 0);
             
+            // Average untuk rasio
             const avgCASA = (data.reduce((a,b) => a + b.casaPct, 0) / data.length).toFixed(1);
             const avgCOF = (data.reduce((a,b) => a + b.cof, 0) / data.length).toFixed(2);
             
@@ -602,6 +544,7 @@
             const totalActFinancing = data.reduce((a,b) => a + b.actFinancing, 0);
             const totalGapFinancing = data.reduce((a,b) => a + b.gapFinancing, 0);
             
+            // Hitung FDR Aggregate manual dari total funding/financing
             const calcFDR = totalActFunding > 0 ? ((totalActFinancing / totalActFunding) * 100).toFixed(1) : "0.0";
             
             const totalFBI = data.reduce((a,b) => a + b.fbi, 0);
@@ -628,6 +571,7 @@
             
             document.getElementById('avgCOF').innerText = avgCOF + '%';
             const cofInd = document.getElementById('cofIndicator');
+            // Threshold COF 2.3%
             if(parseFloat(avgCOF) <= 2.30) {
                 cofInd.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
                 document.getElementById('avgCOF').className = "text-sm font-extrabold text-green-700";
@@ -666,10 +610,12 @@
                 document.getElementById('cntAssetNo').innerText = data.length - assetOk;
                 document.getElementById('iconAsset').innerHTML = totalAsset >= totalTgtAsset ? '<i class="fa-solid fa-circle-check text-green-500"></i>' : '<i class="fa-solid fa-circle-exclamation text-red-400"></i>';
 
+                // Threshold CASA 60%
                 const casaOk = data.filter(d => d.casaPct >= 60).length;
                 document.getElementById('cntCasaOk').innerText = casaOk;
                 document.getElementById('cntCasaNo').innerText = data.length - casaOk;
                 
+                // Threshold COF 2.3%
                 const cofOk = data.filter(d => d.cof <= 2.30).length;
                 document.getElementById('cntCofOk').innerText = cofOk;
                 document.getElementById('cntCofNo').innerText = data.length - cofOk;
@@ -677,6 +623,7 @@
                 document.getElementById('iconCASA').innerHTML = parseFloat(avgCASA) >= 60 ? '<i class="fa-solid fa-circle-check text-green-500"></i>' : '<i class="fa-solid fa-circle-exclamation text-orange-400"></i>';
                 document.getElementById('casaIndicator').innerHTML = document.getElementById('iconCASA').innerHTML;
 
+                // Threshold FDR 30%
                 const fdrOk = data.filter(d => d.fdrPct >= 30).length;
                 document.getElementById('cntFdrOk').innerText = fdrOk;
                 document.getElementById('cntFdrNo').innerText = data.length - fdrOk;
@@ -687,20 +634,19 @@
                 document.getElementById('cntFbiNo').innerText = data.length - fbiOk;
                 document.getElementById('iconFBI').innerHTML = totalFBI >= totalTgtFBI ? '<i class="fa-solid fa-circle-check text-green-500"></i>' : '<i class="fa-solid fa-circle-exclamation text-red-400"></i>';
 
+                // Threshold PPAP 1%
                 const ppapOk = data.filter(d => d.ppap <= 1).length;
                 document.getElementById('cntPpapOk').innerText = ppapOk;
                 document.getElementById('cntPpapNo').innerText = data.length - ppapOk;
                 
                 const highRisk = data.length - ppapOk;
-                document.getElementById('valPPAP').innerText = highRisk + " branches";
-                document.getElementById('statusPPAP').innerText = `of ${data.length} branches are in trouble`;
+                document.getElementById('valPPAP').innerText = highRisk + " Cabang";
+                document.getElementById('statusPPAP').innerText = `dari ${data.length} cabang bermasalah`;
                 document.getElementById('statusPPAP').className = "text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-600 block text-center";
                 document.getElementById('iconPPAP').innerHTML = highRisk === 0 ? '<i class="fa-solid fa-circle-check text-green-500"></i>' : '<i class="fa-solid fa-circle-exclamation text-red-400"></i>';
 
             } else {
                 const d = data[0];
-                if (!d) return;
-                
                 document.getElementById('iconPBT').innerHTML = d.pbt >= d.tgtPbt ? '<i class="fa-solid fa-circle-check text-green-500"></i>' : '<i class="fa-solid fa-circle-exclamation text-red-400"></i>';
                 document.getElementById('iconAsset').innerHTML = d.asset >= d.tgtAsset ? '<i class="fa-solid fa-circle-check text-green-500"></i>' : '<i class="fa-solid fa-circle-exclamation text-red-400"></i>';
                 
@@ -713,11 +659,11 @@
 
                 document.getElementById('valPPAP').innerText = d.ppap.toFixed(2) + '%';
                 if(d.ppap > 1) {
-                    document.getElementById('statusPPAP').innerText = "Alert (>1%)";
+                    document.getElementById('statusPPAP').innerText = "WASPADA (>1%)";
                     document.getElementById('statusPPAP').className = "text-[10px] font-bold px-2 py-0.5 rounded bg-red-100 text-red-700 block text-center";
                     document.getElementById('iconPPAP').innerHTML = '<i class="fa-solid fa-circle-exclamation text-red-500"></i>';
                 } else {
-                    document.getElementById('statusPPAP').innerText = "Secured (<1%)";
+                    document.getElementById('statusPPAP').innerText = "AMAN (<1%)";
                     document.getElementById('statusPPAP').className = "text-[10px] font-bold px-2 py-0.5 rounded bg-green-100 text-green-700 block text-center";
                     document.getElementById('iconPPAP').innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
                 }
@@ -759,9 +705,6 @@
             });
         }
 
-        // ==========================================
-        // CHART.JS SMART LABELS PLUGIN
-        // ==========================================
         const smartLabelsPlugin = {
             id: 'smartLabels',
             afterDatasetsDraw(chart) {
@@ -848,9 +791,6 @@
             }
         };
 
-        // ==========================================
-        // CHART RENDERING FUNCTIONS
-        // ==========================================
         function renderAllCharts(fullData) {
             ['pbt', 'asset', 'casa', 'fdr', 'fbi'].forEach(id => renderSingleChart(id, fullData));
         }
@@ -863,7 +803,9 @@
             const isAggregateAll = (currentMode === 'ALL' && data.length > 10);
             
             const getLegendColor = (dataset) => {
-                if (dataset.label && dataset.label.toUpperCase().includes('GAP')) return '#ef4444';
+                if (dataset.label && dataset.label.toUpperCase().includes('GAP')) {
+                    return '#ef4444';
+                }
                 if (dataset.borderColor) return dataset.borderColor;
                 if (typeof dataset.backgroundColor === 'string') return dataset.backgroundColor;
                 return '#000';
@@ -958,7 +900,10 @@
                         ...commonOptions,
                         scales: {
                             x: commonOptions.scales.x,
-                            y: { type: 'linear', position: 'left', ticks: { font: {size: 8}, callback: formatYAxis } },
+                            y: { 
+                                type: 'linear', position: 'left', 
+                                ticks: { font: {size: 8}, callback: formatYAxis } 
+                            },
                             y1: { type: 'linear', display: !isSingle, position: 'right', min: 0, max: 100, grid: { drawOnChartArea: false }, ticks: {font:{size: 8}} }
                         }
                     },
@@ -980,8 +925,17 @@
                         ...commonOptions,
                         scales: {
                             x: commonOptions.scales.x,
-                            y: { type: 'linear', position: 'left', title: { display: false }, ticks: { font: {size: 8}, callback: formatYAxis } },
-                            y1: { type: 'linear', position: 'right', min: 0, max: 100, title: { display: false }, grid: { drawOnChartArea: false }, ticks: { callback: v => v + '%', font:{size: 8} } }
+                            y: { 
+                                type: 'linear', position: 'left', 
+                                title: { display: false }, 
+                                ticks: { font: {size: 8}, callback: formatYAxis } 
+                            },
+                            y1: { 
+                                type: 'linear', position: 'right', min: 0, max: 100,
+                                title: { display: false },
+                                grid: { drawOnChartArea: false }, 
+                                ticks: { callback: v => v + '%', font:{size: 8} }
+                            }
                         }
                     },
                     plugins: [smartLabelsPlugin]
@@ -996,30 +950,6 @@
                 charts.fbi = new Chart(document.getElementById('fbiChart'), { type: 'bar', data: { labels, datasets }, options: commonOptions, plugins: [smartLabelsPlugin] });
             }
         }
-
-        // ==========================================
-        // INITIALIZATION
-        // ==========================================
-        document.addEventListener('DOMContentLoaded', () => {
-            // Auto-load file list dan pilih file pertama jika tersedia
-            (async () => {
-                try {
-                    const res = await fetch('/api/list-csv');
-                    const data = await res.json();
-                    if (data.files && data.files.length > 0) {
-                        selectDatabase(data.files[0]);
-                    } else {
-                        document.getElementById('loadingText').textContent = 'Tidak ada file CSV ditemukan';
-                        setTimeout(() => {
-                            document.getElementById('loadingOverlay').style.display = 'none';
-                        }, 2000);
-                    }
-                } catch (err) {
-                    document.getElementById('loadingText').textContent = 'Server tidak tersedia. Jalankan python server.py';
-                    // Jangan hide overlay agar user tahu ada masalah
-                }
-            })();
-        });
     </script>
 </body>
 </html>
