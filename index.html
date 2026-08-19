@@ -99,6 +99,7 @@
                     <div class="bg-white-600 p-2 rounded-lg"><img src="img/BMI.png" alt="Bank Muamalat Logo" class="logo" width="35" height="35"></div>
                     <div>
                         <h1 class="text-lg font-bold tracking-wide">BRANCH KPI MONITORING</h1>
+                        <span id="headerSubtitle" style="font-size: 13px;font-weight: bold">
                         <p class="text-xs text-slate-400">Contribution Margin [ Juni 2026 ] | PBT After HOCA • Asset • CASA Ratio • FDR • FBI • PPAP</p>
                     </div>
                 </div>            
@@ -825,6 +826,7 @@
 
         function renderAllCharts(fullData) {
             ['pbt', 'asset', 'casa', 'fdr', 'fbi'].forEach(id => renderSingleChart(id, fullData));
+             updateHeaderSubtitle();
         }
 
         function renderSingleChart(chartId, fullData) {
@@ -984,6 +986,19 @@
                 charts.fbi = new Chart(document.getElementById('fbiChart'), { type: 'bar', data: { labels, datasets }, options: commonOptions, plugins: [smartLabelsPlugin] });
             }
         }
+        // New Function to Update Header Subtitle
+        function updateHeaderSubtitle() {
+            const brVal = document.getElementById('branchFilter').value;
+            const subtitleEl = document.getElementById('headerSubtitle');
+            
+            if (brVal=='ALL') {
+                subtitleEl.innerText = "REGION SUMATERA - Contribution Margin [ Juni 2026 ]";
+            } else {
+                subtitleEl.innerText = brVal + " - Contribution Margin [ Juni 2026 ]";
+            }
+        }
+
+        
     </script>
 </body>
 </html>
