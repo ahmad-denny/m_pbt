@@ -43,9 +43,17 @@
             from { transform: translateY(20px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
+
+        /* --- MODIFIKASI BARU: Class untuk menyembunyikan login saat sudah login --- */
+        body.logged-in #loginOverlay {
+            display: none !important;
+        }
+        body.logged-in #dashboardContent {
+            display: block !important; /* Pastikan dashboard terlihat */
+        }
     </style>
 </head>
-<body class="text-gray-800 overflow-hidden" id="mainBody"  oncontextmenu="return false;" onkeydown="return blockShortcuts(event);" ondragstart="return false;">
+<body class="text-gray-800 overflow-hidden" id="mainBody">
 
     <!-- ================= LOGIN WINDOW MODAL ================= -->
     <div id="loginOverlay" class="fixed inset-0 z-[9999] flex items-center justify-center w-full h-screen bg-slate-900">
@@ -84,6 +92,11 @@
                 class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
                 <span>&#10140;</span> Login
             </button>
+            
+            <!-- Tombol Logout Kecil (Opsional, untuk testing) 
+            <div class="mt-4 text-center">
+                 <button onclick="logout()" class="text-xs text-gray-400 hover:text-red-500 underline">Reset Session (Logout)</button>
+            </div>-->
         </div>
     </div>
     <!-- ================= END LOGIN WINDOW ================= -->
@@ -355,9 +368,26 @@
     </div>
 
     <script>
-        // --- LOGIN LOGIC ---
+        // --- MODIFIED LOGIN LOGIC WITH SESSION STORAGE ---
         const CORRECT_PASSWORD = "rbpm";
         
+        // Cek status login saat halaman dimuat
+        window.addEventListener('load', function() {
+            if (sessionStorage.getItem('isLoggedIn') === 'true') {
+                // Jika sudah login, langsung tampilkan dashboard
+                document.body.classList.add('logged-in');
+                document.getElementById('dashboardContent').classList.remove('hidden');
+                document.body.classList.remove('overflow-hidden');
+                
+                // Inisialisasi data dashboard
+                initFilter();
+                updateDashboard('ALL');
+            } else {
+                // Jika belum login, pastikan overlay terlihat (default)
+                document.getElementById('loginOverlay').classList.remove('hidden');
+            }
+        });
+
         function checkLogin() {
             const input = document.getElementById('loginPassword');
             const errorMsg = document.getElementById('loginError');
@@ -366,6 +396,9 @@
             const body = document.getElementById('mainBody');
 
             if (input.value === CORRECT_PASSWORD) {
+                // Simpan status login ke sessionStorage
+                sessionStorage.setItem('isLoggedIn', 'true');
+                
                 // Success: Hide overlay, show dashboard
                 overlay.style.opacity = '0';
                 setTimeout(() => {
@@ -389,6 +422,12 @@
                 card.offsetHeight; /* trigger reflow */
                 card.style.animation = 'shake 0.5s';
             }
+        }
+
+        // Fungsi tambahan untuk logout (menghapus session)
+        function logout() {
+            sessionStorage.removeItem('isLoggedIn');
+            location.reload();
         }
 
         function togglePassword() {
