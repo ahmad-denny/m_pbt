@@ -92,11 +92,6 @@
                 class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
                 <span>&#10140;</span> Login
             </button>
-            
-            <!-- Tombol Logout Kecil (Opsional, untuk testing) 
-            <div class="mt-4 text-center">
-                 <button onclick="logout()" class="text-xs text-gray-400 hover:text-red-500 underline">Reset Session (Logout)</button>
-            </div>-->
         </div>
     </div>
     <!-- ================= END LOGIN WINDOW ================= -->
@@ -143,9 +138,17 @@
                     <div class="mt-2 pt-2 border-t border-gray-100 text-[10px]">
                         <div class="flex justify-between mb-0.5"><span class="text-gray-500">Target:</span><span id="targetPBT" class="font-semibold">-</span></div>
                         <div class="flex justify-between"><span class="text-gray-500">Gap PBT After HOCA:</span><span id="gapPBT" class="font-bold">-</span></div>
+                        
+                        <!-- TAMBAHAN: Counter Positif/Negatif -->
+                        <div id="countPbtPosNeg" class="mt-1.5 pt-1.5 border-t border-dashed border-gray-200 hidden">
+                            <div class="flex justify-between"><span class="text-green-600">🟢 Cabang Positif</span> <span id="cntPbtPos" class="font-bold">0</span></div>
+                            <div class="flex justify-between"><span class="text-red-500">🔴 Cabang Negatif</span> <span id="cntPbtNeg" class="font-bold">0</span></div>
+                        </div>
+                        <!-- End Tambahan -->
+
                         <div id="countPBT" class="mt-1.5 pt-1.5 border-t border-dashed border-gray-200 hidden">
                             <div class="flex justify-between"><span class="text-green-600">✅ Achieved</span> <span id="cntPbtOk" class="font-bold">0</span></div>
-                            <div class="flex justify-between"><span class="text-red-500">️ Failed</span> <span id="cntPbtNo" class="font-bold">0</span></div>
+                            <div class="flex justify-between"><span class="text-red-500">⚠️ Failed</span> <span id="cntPbtNo" class="font-bold">0</span></div>
                         </div>
                     </div>
                 </div>
@@ -675,7 +678,19 @@
                 else el.classList.add('hidden');
             });
 
+            // --- UPDATE LOGIC UNTUK POSITIF/NEGATIF ---
+            const posNegContainer = document.getElementById('countPbtPosNeg');
             if(isAggregate) {
+                posNegContainer.classList.remove('hidden');
+                
+                // Hitung cabang positif (PBT > 0) dan negatif (PBT < 0)
+                const cntPos = data.filter(d => d.pbt > 0).length;
+                const cntNeg = data.filter(d => d.pbt < 0).length;
+
+                document.getElementById('cntPbtPos').innerText = cntPos;
+                document.getElementById('cntPbtNeg').innerText = cntNeg;
+
+                // Logic existing lainnya
                 const pbtOk = data.filter(d => d.pbt >= d.tgtPbt).length;
                 document.getElementById('cntPbtOk').innerText = pbtOk;
                 document.getElementById('cntPbtNo').innerText = data.length - pbtOk;
@@ -718,6 +733,8 @@
                 document.getElementById('iconPPAP').innerHTML = highRisk === 0 ? '<i class="fa-solid fa-circle-check text-green-500"></i>' : '<i class="fa-solid fa-circle-exclamation text-red-400"></i>';
 
             } else {
+                posNegContainer.classList.add('hidden');
+                
                 const d = data[0];
                 document.getElementById('iconPBT').innerHTML = d.pbt >= d.tgtPbt ? '<i class="fa-solid fa-circle-check text-green-500"></i>' : '<i class="fa-solid fa-circle-exclamation text-red-400"></i>';
                 document.getElementById('iconAsset').innerHTML = d.asset >= d.tgtAsset ? '<i class="fa-solid fa-circle-check text-green-500"></i>' : '<i class="fa-solid fa-circle-exclamation text-red-400"></i>';
