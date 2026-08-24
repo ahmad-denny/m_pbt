@@ -397,7 +397,7 @@
                 const filename = config.file;
                 
                 const response = await fetch(filename);
-                if (!response.ok) throw new Error(`Error loading file ${filename}`);
+                if (!response.ok) throw new Error(`File ${filename} not upload yet`);
                 
                 const json = await response.json();
                 
