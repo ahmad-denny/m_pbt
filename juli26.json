@@ -16,7 +16,7 @@
       "gapFinancing": "-5,709 ",
       "fbi": " 694 ",
       "tgtFbi": " 1,441 ",
-      "gapFbi": "-458,102 ",
+      "gapFbi": "-458 ",
       "ppap": "100.0%"
     },
     {
@@ -36,7 +36,7 @@
       "gapFinancing": " 13,430 ",
       "fbi": " 349 ",
       "tgtFbi": " 417 ",
-      "gapFbi": " 15,308 ",
+      "gapFbi": " 15 ",
       "ppap": "4.4%"
     },
     {
@@ -56,7 +56,7 @@
       "gapFinancing": "-9,838 ",
       "fbi": " 235 ",
       "tgtFbi": " 361 ",
-      "gapFbi": "-54,495 ",
+      "gapFbi": "-54 ",
       "ppap": "0.0%"
     },
     {
@@ -76,7 +76,7 @@
       "gapFinancing": " 12,218 ",
       "fbi": " 361 ",
       "tgtFbi": " 361 ",
-      "gapFbi": " 71,804 ",
+      "gapFbi": " 72 ",
       "ppap": "0.0%"
     },
     {
@@ -96,7 +96,7 @@
       "gapFinancing": " 410 ",
       "fbi": " 164 ",
       "tgtFbi": " 361 ",
-      "gapFbi": "-125,335 ",
+      "gapFbi": "-125 ",
       "ppap": "0.0%"
     },
     {
@@ -116,7 +116,7 @@
       "gapFinancing": " 1,186 ",
       "fbi": " 844 ",
       "tgtFbi": " 1,497 ",
-      "gapFbi": "-353,890 ",
+      "gapFbi": "-354 ",
       "ppap": "14.0%"
     },
     {
@@ -136,7 +136,7 @@
       "gapFinancing": "-5,733 ",
       "fbi": " 207 ",
       "tgtFbi": " 417 ",
-      "gapFbi": "-127,106 ",
+      "gapFbi": "-127 ",
       "ppap": "1.1%"
     },
     {
@@ -156,7 +156,7 @@
       "gapFinancing": "-3,550 ",
       "fbi": " 194 ",
       "tgtFbi": " 361 ",
-      "gapFbi": "-95,267 ",
+      "gapFbi": "-95 ",
       "ppap": "0.1%"
     },
     {
@@ -176,7 +176,7 @@
       "gapFinancing": "-17,100 ",
       "fbi": " 154 ",
       "tgtFbi": " 361 ",
-      "gapFbi": "-135,377 ",
+      "gapFbi": "-135 ",
       "ppap": "0.0%"
     },
     {
@@ -196,7 +196,7 @@
       "gapFinancing": "-59,467 ",
       "fbi": " 782 ",
       "tgtFbi": " 784 ",
-      "gapFbi": " 154,899 ",
+      "gapFbi": " 155 ",
       "ppap": "1.5%"
     },
     {
@@ -216,7 +216,7 @@
       "gapFinancing": "-12,434 ",
       "fbi": " 177 ",
       "tgtFbi": " 361 ",
-      "gapFbi": "-111,959 ",
+      "gapFbi": "-112 ",
       "ppap": "1.8%"
     },
     {
@@ -236,7 +236,7 @@
       "gapFinancing": "-17,647 ",
       "fbi": " 274 ",
       "tgtFbi": " 417 ",
-      "gapFbi": "-59,997 ",
+      "gapFbi": "-60 ",
       "ppap": "0.0%"
     },
     {
@@ -256,7 +256,7 @@
       "gapFinancing": "-17,233 ",
       "fbi": " 167 ",
       "tgtFbi": " 361 ",
-      "gapFbi": "-122,516 ",
+      "gapFbi": "-123 ",
       "ppap": "0.0%"
     },
     {
@@ -276,7 +276,7 @@
       "gapFinancing": " 8,911 ",
       "fbi": " 674 ",
       "tgtFbi": " 1,192 ",
-      "gapFbi": "-278,831 ",
+      "gapFbi": "-279 ",
       "ppap": "1.4%"
     },
     {
@@ -296,7 +296,7 @@
       "gapFinancing": "-22,147 ",
       "fbi": " 162 ",
       "tgtFbi": " 417 ",
-      "gapFbi": "-172,092 ",
+      "gapFbi": "-172 ",
       "ppap": "0.0%"
     },
     {
@@ -316,7 +316,7 @@
       "gapFinancing": "-14,486 ",
       "fbi": " 309 ",
       "tgtFbi": " 417 ",
-      "gapFbi": "-24,801 ",
+      "gapFbi": "-25 ",
       "ppap": "3.1%"
     },
     {
@@ -336,7 +336,7 @@
       "gapFinancing": "-9,517 ",
       "fbi": " 202 ",
       "tgtFbi": " 361 ",
-      "gapFbi": "-86,728 ",
+      "gapFbi": "-87 ",
       "ppap": "0.5%"
     },
     {
@@ -356,7 +356,7 @@
       "gapFinancing": "-1,072 ",
       "fbi": " 564 ",
       "tgtFbi": " 1,111 ",
-      "gapFbi": "-324,443 ",
+      "gapFbi": "-324 ",
       "ppap": "0.9%"
     },
     {
@@ -376,7 +376,7 @@
       "gapFinancing": "-21,823 ",
       "fbi": " 363 ",
       "tgtFbi": " 417 ",
-      "gapFbi": " 29,325 ",
+      "gapFbi": " 29 ",
       "ppap": "0.1%"
     },
     {
@@ -396,7 +396,7 @@
       "gapFinancing": "-9,586 ",
       "fbi": " 140 ",
       "tgtFbi": " 361 ",
-      "gapFbi": "-148,785 ",
+      "gapFbi": "-149 ",
       "ppap": "0.2%"
     },
     {
@@ -416,7 +416,7 @@
       "gapFinancing": "-14,586 ",
       "fbi": " 142 ",
       "tgtFbi": " 361 ",
-      "gapFbi": "-146,680 ",
+      "gapFbi": "-147 ",
       "ppap": "0.0%"
     },
     {
@@ -436,7 +436,7 @@
       "gapFinancing": "-10,223 ",
       "fbi": " 490 ",
       "tgtFbi": " 417 ",
-      "gapFbi": " 156,418 ",
+      "gapFbi": " 156 ",
       "ppap": "12.3%"
     },
     {
@@ -456,7 +456,7 @@
       "gapFinancing": " 1,321 ",
       "fbi": " 191 ",
       "tgtFbi": " 361 ",
-      "gapFbi": "-97,672 ",
+      "gapFbi": "-98 ",
       "ppap": "0.0%"
     },
     {
@@ -476,7 +476,7 @@
       "gapFinancing": "-38,803 ",
       "fbi": " 875 ",
       "tgtFbi": " 1,497 ",
-      "gapFbi": "-322,513 ",
+      "gapFbi": "-323 ",
       "ppap": "2.4%"
     },
     {
@@ -496,7 +496,7 @@
       "gapFinancing": "-6,240 ",
       "fbi": " 282 ",
       "tgtFbi": " 361 ",
-      "gapFbi": "-7,304 ",
+      "gapFbi": "-7 ",
       "ppap": "1.2%"
     },
     {
@@ -516,7 +516,7 @@
       "gapFinancing": "-18,166 ",
       "fbi": " 215 ",
       "tgtFbi": " 417 ",
-      "gapFbi": "-118,447 ",
+      "gapFbi": "-118 ",
       "ppap": "0.9%"
     },
     {
@@ -536,7 +536,7 @@
       "gapFinancing": "-9,260 ",
       "fbi": " 351 ",
       "tgtFbi": " 361 ",
-      "gapFbi": " 61,851 ",
+      "gapFbi": " 62 ",
       "ppap": "0.9%"
     },
     {
@@ -556,7 +556,7 @@
       "gapFinancing": "-7,787 ",
       "fbi": " 205 ",
       "tgtFbi": " 361 ",
-      "gapFbi": "-83,641 ",
+      "gapFbi": "-84 ",
       "ppap": "0.0%"
     },
     {
@@ -576,7 +576,7 @@
       "gapFinancing": " 10,511 ",
       "fbi": " 898 ",
       "tgtFbi": " 1,497 ",
-      "gapFbi": "-299,880 ",
+      "gapFbi": "-300 ",
       "ppap": "2.6%"
     },
     {
@@ -596,7 +596,7 @@
       "gapFinancing": "-4,102 ",
       "fbi": " 383 ",
       "tgtFbi": " 361 ",
-      "gapFbi": " 93,922 ",
+      "gapFbi": " 94 ",
       "ppap": "0.3%"
     },
     {
@@ -616,7 +616,7 @@
       "gapFinancing": " 18,885 ",
       "fbi": " 702 ",
       "tgtFbi": " 417 ",
-      "gapFbi": " 368,307 ",
+      "gapFbi": " 368 ",
       "ppap": "0.0%"
     },
     {
@@ -636,7 +636,7 @@
       "gapFinancing": "-10,938 ",
       "fbi": " 443 ",
       "tgtFbi": " 417 ",
-      "gapFbi": " 108,686 ",
+      "gapFbi": " 109 ",
       "ppap": "9.1%"
     },
     {
@@ -656,7 +656,7 @@
       "gapFinancing": "-8,567 ",
       "fbi": " 349 ",
       "tgtFbi": " 840 ",
-      "gapFbi": "-322,767 ",
+      "gapFbi": "-323 ",
       "ppap": "100.0%"
     },
     {
@@ -676,7 +676,7 @@
       "gapFinancing": "-23,770 ",
       "fbi": " 460 ",
       "tgtFbi": " 723 ",
-      "gapFbi": "-118,342 ",
+      "gapFbi": "-118 ",
       "ppap": "0.0%"
     },
     {
@@ -696,7 +696,7 @@
       "gapFinancing": "-8,371 ",
       "fbi": " 225 ",
       "tgtFbi": " 361 ",
-      "gapFbi": "-63,894 ",
+      "gapFbi": "-64 ",
       "ppap": "0.0%"
     },
     {
@@ -716,7 +716,7 @@
       "gapFinancing": "-1,966 ",
       "fbi": " 475 ",
       "tgtFbi": " 1,135 ",
-      "gapFbi": "-433,132 ",
+      "gapFbi": "-433 ",
       "ppap": "0.2%"
     },
     {
@@ -736,7 +736,7 @@
       "gapFinancing": " 2,015 ",
       "fbi": " 146 ",
       "tgtFbi": " 361 ",
-      "gapFbi": "-143,205 ",
+      "gapFbi": "-143 ",
       "ppap": "8.7%"
     },
     {
@@ -756,7 +756,7 @@
       "gapFinancing": " 4,839 ",
       "fbi": " 495 ",
       "tgtFbi": " 361 ",
-      "gapFbi": " 206,322 ",
+      "gapFbi": " 206 ",
       "ppap": "0.8%"
     },
     {
@@ -776,7 +776,7 @@
       "gapFinancing": "-3,686 ",
       "fbi": " 213 ",
       "tgtFbi": " 361 ",
-      "gapFbi": "-75,897 ",
+      "gapFbi": "-76 ",
       "ppap": "0.1%"
     },
     {
@@ -796,7 +796,7 @@
       "gapFinancing": "-1,662 ",
       "fbi": " 145 ",
       "tgtFbi": " 361 ",
-      "gapFbi": "-144,379 ",
+      "gapFbi": "-144 ",
       "ppap": "5.1%"
     }
   ]
