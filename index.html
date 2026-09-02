@@ -5,22 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Branch KPI Monitoring - Region Sumatera</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; }
         .card { transition: all 0.3s ease; }
-        .card:hover { transform: translateY(-15px); box-shadow: 0 5px 10px rgba(0,0,0,0.1); }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 5px 10px rgba(0,0,0,0.1); }
         
-        .chart-wrapper { position: relative; width: 100%; height: 300px; transition: height 0.3s ease; }
+        .chart-wrapper { position: relative; width: 100%; height: 280px; transition: height 0.3s ease; }
+        
+        @media (max-width: 640px) {
+            .chart-wrapper { height: 230px; }
+            .chart-wrapper.compact { height: 180px; }
+        }
+
         .chart-wrapper.compact { height: 195px; }
 
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
@@ -28,7 +31,7 @@
         .rank-btn { transition: all 0.2s; }
         .rank-btn.active { background-color: #1e293b; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .rank-btn:not(.active):hover { background-color: #e2e8f0; }
-        .footer { text-align: center; padding: 5px; font-size: 0.75rem; color: var(--text-muted); margin-top: -35px; }        
+        .footer { text-align: center; padding: 15px 5px; font-size: 0.75rem; color: #64748b; margin-top: 10px; }        
 
         /* Style untuk Login Modal */
         #loginOverlay {
@@ -53,9 +56,8 @@
 </head>
 <body class="text-gray-800 overflow-hidden" id="mainBody">
 
-    <!-- ================= LOGIN WINDOW MODAL ================= -->
-    <div id="loginOverlay" class="fixed inset-0 z-[9999] flex items-center justify-center w-full h-screen bg-slate-900">
-        <div class="login-card bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md mx-4 relative">
+    <div id="loginOverlay" class="fixed inset-0 z-[9999] flex items-center justify-center w-full h-screen bg-slate-900 p-4">
+        <div class="login-card bg-white rounded-2xl shadow-2xl p-6 sm:p-8 w-full max-w-md relative">
             <div class="flex justify-center mb-4">
                 <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center">
                     <i class="fa-solid fa-lock text-purple-600 text-2xl"></i>
@@ -66,7 +68,7 @@
 
             <div class="relative mb-4">
                 <input type="password" id="loginPassword" 
-                    class="w-full px-4 py-3 bg-gray-50 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-slate-700 placeholder-gray-400 transition-all"
+                    class="w-full px-4 py-3 bg-gray-50 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-slate-700 placeholder-gray-400 transition-all text-sm sm:text-base"
                     placeholder="Enter password..." onkeypress="handleEnter(event)" autofocus>
                 
                 <button onclick="togglePassword()" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none">
@@ -84,31 +86,26 @@
             </button>
         </div>
     </div>
-    <!-- ================= END LOGIN WINDOW ================= -->
-
-    <!-- DASHBOARD CONTENT -->
     <div id="dashboardContent" class="hidden">
         <nav class="bg-slate-900 text-white shadow-lg sticky top-0 z-50">
-            <div class="container mx-auto px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-3">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-white-600 p-2 rounded-lg"><img src="img/BMI.png" alt="Bank Muamalat Logo" class="logo" width="35" height="35"></div>
-                    <div>
-                        <h1 class="text-lg font-bold tracking-wide" id="headerTitle">CONTRIBUTION MARGIN [JUNI 2026]</h1>
-                        <span id="headerSubtitle" class="text-sm font-bold text-slate-400 px3 ">
-                        <p class="text-xs text-slate-400">Contribution Margin | PBT After HOCA • Asset • CASA Ratio • FDR • FBI • PPAP</p>
+            <div class="container mx-auto px-4 sm:px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-3">
+                <div class="flex items-center space-x-3 w-full md:w-auto justify-between md:justify-start">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-white-600 p-1 rounded-lg shrink-0"><img src="img/BMI.png" alt="Bank Muamalat Logo" class="logo" width="32" height="32"></div>
+                        <div>
+                            <h1 class="text-base sm:text-lg font-bold tracking-wide leading-tight" id="headerTitle">CONTRIBUTION MARGIN [JUNI 2026]</h1>
+                            <p class="text-[10px] sm:text-xs text-slate-400 hidden sm:block">Contribution Margin | PBT After HOCA • Asset • CASA Ratio • FDR • FBI • PPAP</p>
+                        </div>
                     </div>
                 </div>            
                 
-                <div class="flex items-center gap-3">
-                    <!-- TAB MENU DATA (DINAMIS) -->
-                    <div id="tabContainer" class="flex bg-slate-800 rounded-lg p-1 border border-slate-700 overflow-x-auto max-w-[300px] sm:max-w-none">
-                        <!-- Tombol akan digenerate oleh Javascript di sini -->
-                    </div>
+                <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 w-full md:w-auto justify-between">
+                    <div id="tabContainer" class="flex bg-slate-800 rounded-lg p-1 border border-slate-700 overflow-x-auto max-w-full">
+                        </div>
 
-                    <!-- BRANCH SELECTOR -->
-                    <div class="flex items-center bg-slate-800 rounded-lg p-1 border border-slate-700">
-                        <label class="text-xs font-semibold text-slate-400 px-3 uppercase hidden sm:block">SELECT BRANCH:</label>
-                        <select id="branchFilter" class="bg-slate-900 text-white text-sm rounded-md border-none focus:ring-2 focus:ring-blue-500 py-1.5 px-3 outline-none cursor-pointer min-w-[180px]">
+                    <div class="flex items-center bg-slate-800 rounded-lg p-1 border border-slate-700 flex-1 sm:flex-none">
+                        <label class="text-xs font-semibold text-slate-400 px-2 uppercase hidden lg:block">SELECT BRANCH:</label>
+                        <select id="branchFilter" class="bg-slate-900 text-white text-xs sm:text-sm rounded-md border-none focus:ring-2 focus:ring-blue-500 py-1.5 px-2 sm:px-3 outline-none cursor-pointer w-full sm:min-w-[180px]">
                             <option value="ALL">📊 REGION SUMATERA</option>
                         </select>
                     </div>
@@ -116,25 +113,23 @@
             </div>
         </nav>
 
-        <div class="container mx-auto px-6 py-6">
-            <!-- Summary Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
-                <!-- 1. PBT Card -->
-                <div class="card bg-white p-3 rounded-xl shadow-sm border-t-8 border-l-2 border-blue-500 relative overflow-hidden">
-                    <div class="absolute top-3 right-3 text-xl" id="iconPBT"></div>
-                    <div class="flex justify-between items-start pr-8">
+        <div class="container mx-auto px-3 sm:px-6 py-4 sm:py-6">
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2.5 sm:gap-4 mb-6">
+                <div class="card bg-white p-2.5 sm:p-3 rounded-xl shadow-sm border-t-4 sm:border-t-8 border-l-2 border-blue-500 relative overflow-hidden">
+                    <div class="absolute top-2 right-2 sm:top-3 sm:right-3 text-lg sm:text-xl" id="iconPBT"></div>
+                    <div class="flex justify-between items-start pr-6 sm:pr-8">
                         <div>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">PBT After HOCA</p>
-                            <h3 class="text-lg font-extrabold mt-0.5 text-slate-800" id="sumPBT">-</h3>
+                            <p class="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-wider">PBT After HOCA</p>
+                            <h3 class="text-sm sm:text-lg font-extrabold mt-0.5 text-slate-800" id="sumPBT">-</h3>
                         </div>
-                        <div class="p-1.5 bg-indigo-50 rounded-full text-indigo-600"><i class="fa-solid fa-coins text-sm"></i></div>
+                        <div class="p-1 sm:p-1.5 bg-indigo-50 rounded-full text-indigo-600 hidden sm:block"><i class="fa-solid fa-coins text-xs sm:text-sm"></i></div>
                     </div>
-                    <div class="mt-2 pt-2 border-t border-gray-100 text-[10px]">
+                    <div class="mt-2 pt-2 border-t border-gray-100 text-[9px] sm:text-[10px]">
                         <div class="flex justify-between mb-0.5"><span class="text-gray-500">Target:</span><span id="targetPBT" class="font-semibold">-</span></div>
-                        <div class="flex justify-between"><span class="text-gray-500">Gap PBT After HOCA:</span><span id="gapPBT" class="font-bold">-</span></div>
+                        <div class="flex justify-between"><span class="text-gray-500">Gap PBT:</span><span id="gapPBT" class="font-bold">-</span></div>
                         <div id="countPbtPosNeg" class="mt-1.5 pt-1.5 border-t border-dashed border-gray-200 hidden">
-                            <div class="flex justify-between"><span class="text-green-600">🟢 Cabang Positif</span> <span id="cntPbtPos" class="font-bold">0</span></div>
-                            <div class="flex justify-between"><span class="text-red-500">🔴 Cabang Negatif</span> <span id="cntPbtNeg" class="font-bold">0</span></div>
+                            <div class="flex justify-between"><span class="text-green-600">🟢 Positif</span> <span id="cntPbtPos" class="font-bold">0</span></div>
+                            <div class="flex justify-between"><span class="text-red-500">🔴 Negatif</span> <span id="cntPbtNeg" class="font-bold">0</span></div>
                         </div>
                         <div id="countPBT" class="mt-1.5 pt-1.5 border-t border-dashed border-gray-200 hidden">
                             <div class="flex justify-between"><span class="text-green-600">✅ Achieved</span> <span id="cntPbtOk" class="font-bold">0</span></div>
@@ -143,18 +138,17 @@
                     </div>
                 </div>
 
-                <!-- 2. Asset Card -->
-                <div class="card bg-white p-3 rounded-xl shadow-sm border-t-8 border-l-2 border-emerald-500 relative overflow-hidden">
-                    <div class="absolute top-3 right-3 text-xl" id="iconAsset"></div>
-                    <div class="flex justify-between items-start pr-8">
+                <div class="card bg-white p-2.5 sm:p-3 rounded-xl shadow-sm border-t-4 sm:border-t-8 border-l-2 border-emerald-500 relative overflow-hidden">
+                    <div class="absolute top-2 right-2 sm:top-3 sm:right-3 text-lg sm:text-xl" id="iconAsset"></div>
+                    <div class="flex justify-between items-start pr-6 sm:pr-8">
                         <div>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Asset</p>
-                            <h3 class="text-lg font-extrabold mt-0.5 text-slate-800" id="sumAsset">-</h3>
+                            <p class="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-wider">Asset</p>
+                            <h3 class="text-sm sm:text-lg font-extrabold mt-0.5 text-slate-800" id="sumAsset">-</h3>
                         </div>
-                        <div class="p-1.5 bg-blue-50 rounded-full text-blue-600"><i class="fa-solid fa-building-columns text-sm"></i></div>
+                        <div class="p-1 sm:p-1.5 bg-blue-50 rounded-full text-blue-600 hidden sm:block"><i class="fa-solid fa-building-columns text-xs sm:text-sm"></i></div>
                     </div>
-                    <div class="mt-2 pt-2 border-t border-gray-100 text-[10px]">
-                        <div class="flex justify-between mb-0.5"><span class="text-gray-500">Target (OHC/NIM3%):</span><span id="targetAsset" class="font-semibold">-</span></div>
+                    <div class="mt-2 pt-2 border-t border-gray-100 text-[9px] sm:text-[10px]">
+                        <div class="flex justify-between mb-0.5"><span class="text-gray-500">Target:</span><span id="targetAsset" class="font-semibold">-</span></div>
                         <div class="flex justify-between"><span class="text-gray-500">Gap Asset:</span><span id="gapAsset" class="font-bold">-</span></div>
                         <div id="countAsset" class="mt-1.5 pt-1.5 border-t border-dashed border-gray-200 hidden">
                             <div class="flex justify-between"><span class="text-green-600">✅ Achieved</span> <span id="cntAssetOk" class="font-bold">0</span></div>
@@ -163,71 +157,68 @@
                     </div>
                 </div>
 
-                <!-- 3. CASA Card -->
-                <div class="card bg-white p-3 rounded-xl shadow-sm border-t-8 border-l-2 border-rose-500 relative overflow-hidden">
-                    <div class="absolute top-3 right-3 text-xl" id="iconCASA"></div>
-                    <div class="flex justify-between items-start pr-8">
+                <div class="card bg-white p-2.5 sm:p-3 rounded-xl shadow-sm border-t-4 sm:border-t-8 border-l-2 border-rose-500 relative overflow-hidden">
+                    <div class="absolute top-2 right-2 sm:top-3 sm:right-3 text-lg sm:text-xl" id="iconCASA"></div>
+                    <div class="flex justify-between items-start pr-6 sm:pr-8">
                         <div class="w-full">
                             <div class="flex justify-between items-center">
-                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">CASA Ratio</p>
+                                <p class="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-wider">CASA Ratio</p>
                                 <span id="casaIndicator" class="text-xs"></span>
                             </div>
-                            <h3 class="text-lg font-extrabold mt-0.5 text-slate-800" id="avgCASA">-</h3>
+                            <h3 class="text-sm sm:text-lg font-extrabold mt-0.5 text-slate-800" id="avgCASA">-</h3>
                             <div class="mt-1 pt-1 border-t border-dashed border-gray-200 flex justify-between items-center">
                                 <div>
-                                    <p class="text-[9px] font-bold text-gray-400 uppercase">Cost Of Fund (≤2.3%)</p>
+                                    <p class="text-[8px] sm:text-[9px] font-bold text-gray-400 uppercase">COF (≤2.3%)</p>
                                     <div class="flex items-baseline gap-1">
-                                        <span class="text-sm font-extrabold text-slate-700" id="avgCOF">-</span>
+                                        <span class="text-xs sm:text-sm font-extrabold text-slate-700" id="avgCOF">-</span>
                                         <span id="cofIndicator" class="text-xs"></span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="mt-2 pt-2 border-t border-gray-100 text-[10px]">
-                        <div class="flex justify-between mb-0.5"><span class="text-gray-500">Actual CASA:</span><span id="actCasaAmt" class="font-semibold text-slate-700">-</span></div>
+                    <div class="mt-2 pt-2 border-t border-gray-100 text-[9px] sm:text-[10px]">
+                        <div class="flex justify-between mb-0.5"><span class="text-gray-500">Actual:</span><span id="actCasaAmt" class="font-semibold text-slate-700">-</span></div>
                         <div class="flex justify-between"><span class="text-gray-500">Gap CASA:</span><span id="gapCasaAmt" class="font-bold">-</span></div>
                         <div id="countCASA" class="mt-1.5 pt-1.5 border-t border-dashed border-gray-200 hidden">
                             <div class="flex justify-between"><span class="text-green-600">✅ CASA ≥60%</span> <span id="cntCasaOk" class="font-bold">0</span></div>
                             <div class="flex justify-between"><span class="text-red-500">⚠️ <60%</span> <span id="cntCasaNo" class="font-bold">0</span></div>
-                            <div class="flex justify-between mt-1"><span class="text-green-600">✅ COF ≤2.3%</span> <span id="cntCofOk" class="font-bold">0</span></div>
+                            <div class="flex justify-between mt-0.5"><span class="text-green-600">✅ COF ≤2.3%</span> <span id="cntCofOk" class="font-bold">0</span></div>
                             <div class="flex justify-between"><span class="text-orange-500">⚠️ COF >2.3%</span> <span id="cntCofNo" class="font-bold">0</span></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 4. FDR Card -->
-                <div class="card bg-white p-3 rounded-xl shadow-sm border-t-8 border-l-2 border-amber-500 relative overflow-hidden">
-                    <div class="absolute top-3 right-3 text-xl" id="iconFDR"></div>
-                    <div class="flex justify-between items-start pr-8">
+                <div class="card bg-white p-2.5 sm:p-3 rounded-xl shadow-sm border-t-4 sm:border-t-8 border-l-2 border-amber-500 relative overflow-hidden">
+                    <div class="absolute top-2 right-2 sm:top-3 sm:right-3 text-lg sm:text-xl" id="iconFDR"></div>
+                    <div class="flex justify-between items-start pr-6 sm:pr-8">
                         <div>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Financing to Deposit Ratio</p>
-                            <h3 class="text-lg font-extrabold mt-0.5 text-slate-800" id="avgFDR">-</h3>
+                            <p class="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-wider">FDR Ratio</p>
+                            <h3 class="text-sm sm:text-lg font-extrabold mt-0.5 text-slate-800" id="avgFDR">-</h3>
                         </div>
-                        <div class="p-1.5 bg-violet-50 rounded-full text-violet-600"><i class="fa-solid fa-money-bill-transfer text-sm"></i></div>
+                        <div class="p-1 sm:p-1.5 bg-violet-50 rounded-full text-violet-600 hidden sm:block"><i class="fa-solid fa-money-bill-transfer text-xs sm:text-sm"></i></div>
                     </div>
-                    <div class="mt-2 pt-2 border-t border-gray-100 text-[10px]">
+                    <div class="mt-2 pt-2 border-t border-gray-100 text-[9px] sm:text-[10px]">
                         <div class="flex justify-between mb-0.5"><span class="text-gray-500">Financing:</span><span id="actFinancing" class="font-semibold text-slate-700">-</span></div>
-                        <div class="flex justify-between"><span class="text-gray-500">Gap Financing:</span><span id="gapFinancing" class="font-bold">-</span></div>
+                        <div class="flex justify-between"><span class="text-gray-500">Gap Fin:</span><span id="gapFinancing" class="font-bold">-</span></div>
                         <div id="countFDR" class="mt-1.5 pt-1.5 border-t border-dashed border-gray-200 hidden">
                             <div class="flex justify-between"><span class="text-green-600">✅ FDR ≥30%</span> <span id="cntFdrOk" class="font-bold">0</span></div>
-                            <div class="flex justify-between"><span class="text-orange-500">️ <30%</span> <span id="cntFdrNo" class="font-bold">0</span></div>
+                            <div class="flex justify-between"><span class="text-orange-500">⚠️ <30%</span> <span id="cntFdrNo" class="font-bold">0</span></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 5. FBI Card -->
-                <div class="card bg-white p-3 rounded-xl shadow-sm border-t-8 border-l-2 border-violet-500 relative overflow-hidden">
-                    <div class="absolute top-3 right-3 text-xl" id="iconFBI"></div>
-                    <div class="flex justify-between items-start pr-8">
+                <div class="card bg-white p-2.5 sm:p-3 rounded-xl shadow-sm border-t-4 sm:border-t-8 border-l-2 border-violet-500 relative overflow-hidden">
+                    <div class="absolute top-2 right-2 sm:top-3 sm:right-3 text-lg sm:text-xl" id="iconFBI"></div>
+                    <div class="flex justify-between items-start pr-6 sm:pr-8">
                         <div>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Fee Based Income</p>
-                            <h3 class="text-lg font-extrabold mt-0.5 text-slate-800" id="sumFBI">-</h3>
+                            <p class="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-wider">Fee Based Income</p>
+                            <h3 class="text-sm sm:text-lg font-extrabold mt-0.5 text-slate-800" id="sumFBI">-</h3>
                         </div>
-                        <div class="p-1.5 bg-amber-50 rounded-full text-amber-600"><i class="fa-solid fa-briefcase text-sm"></i></div>
+                        <div class="p-1 sm:p-1.5 bg-amber-50 rounded-full text-amber-600 hidden sm:block"><i class="fa-solid fa-briefcase text-xs sm:text-sm"></i></div>
                     </div>
-                    <div class="mt-2 pt-2 border-t border-gray-100 text-[10px]">
-                        <div class="flex justify-between mb-0.5"><span class="text-gray-500">Target FBI 80%:</span><span id="targetFBI" class="font-semibold">-</span></div>
+                    <div class="mt-2 pt-2 border-t border-gray-100 text-[9px] sm:text-[10px]">
+                        <div class="flex justify-between mb-0.5"><span class="text-gray-500">Target FBI:</span><span id="targetFBI" class="font-semibold">-</span></div>
                         <div class="flex justify-between"><span class="text-gray-500">Gap FBI:</span><span id="gapFBI" class="font-bold">-</span></div>
                         <div id="countFBI" class="mt-1.5 pt-1.5 border-t border-dashed border-gray-200 hidden">
                             <div class="flex justify-between"><span class="text-green-600">✅ Achieved</span> <span id="cntFbiOk" class="font-bold">0</span></div>
@@ -236,19 +227,18 @@
                     </div>
                 </div>
 
-                <!-- 6. PPAP Card -->
-                <div class="card bg-white p-3 rounded-xl shadow-sm border-t-8 border-l-2 border-fuchsia-500 relative overflow-hidden">
-                    <div class="absolute top-3 right-3 text-xl" id="iconPPAP"></div>
-                    <div class="flex justify-between items-start pr-8">
+                <div class="card bg-white p-2.5 sm:p-3 rounded-xl shadow-sm border-t-4 sm:border-t-8 border-l-2 border-fuchsia-500 relative overflow-hidden col-span-2 sm:col-span-1">
+                    <div class="absolute top-2 right-2 sm:top-3 sm:right-3 text-lg sm:text-xl" id="iconPPAP"></div>
+                    <div class="flex justify-between items-start pr-6 sm:pr-8">
                         <div>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">PPAP / YTD > 1%</p>
-                            <h3 class="text-lg font-extrabold mt-0.5 text-slate-800" id="valPPAP">-</h3>
+                            <p class="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-wider">PPAP / YTD > 1%</p>
+                            <h3 class="text-sm sm:text-lg font-extrabold mt-0.5 text-slate-800" id="valPPAP">-</h3>
                         </div>
-                        <div class="p-1.5 bg-rose-50 rounded-full text-rose-600"><i class="fa-solid fa-triangle-exclamation text-sm"></i></div>
+                        <div class="p-1 sm:p-1.5 bg-rose-50 rounded-full text-rose-600 hidden sm:block"><i class="fa-solid fa-triangle-exclamation text-xs sm:text-sm"></i></div>
                     </div>
                     <div class="mt-2 pt-2 border-t border-gray-100">
-                         <span id="statusPPAP" class="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-500 block text-center">-</span>
-                         <div id="countPPAP" class="mt-1.5 pt-1.5 border-t border-dashed border-gray-200 text-[10px] hidden">
+                         <span id="statusPPAP" class="text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-500 block text-center">-</span>
+                         <div id="countPPAP" class="mt-1.5 pt-1.5 border-t border-dashed border-gray-200 text-[9px] sm:text-[10px] hidden">
                             <div class="flex justify-between"><span class="text-green-600">✅ Secured (<1%)</span> <span id="cntPpapOk" class="font-bold">0</span></div>
                             <div class="flex justify-between"><span class="text-red-500">⚠️ Alert (>1%)</span> <span id="cntPpapNo" class="font-bold">0</span></div>
                         </div>
@@ -256,104 +246,94 @@
                 </div>
             </div>
 
-            <!-- Charts Grid -->
-            <div id="chartsGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 transition-all duration-300">
-                <!-- PBT -->
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 gap-1">
-                        <h3 class="text-sm font-bold text-slate-700">Profit Before Tax After HOCA</h3>
-                        <div id="ctrl-pbt" class="hidden bg-gray-100 rounded-lg p-0.5 flex text-[10px] font-medium">
-                            <button onclick="setChartRank('pbt', 'TOP')" class="rank-btn px-2 py-0.5 rounded text-slate-600">Top 10</button>
-                            <button onclick="setChartRank('pbt', 'BOTTOM')" class="rank-btn px-2 py-0.5 rounded text-slate-600">Bottom 10</button>
-                            <button onclick="setChartRank('pbt', 'ALL')" class="rank-btn active px-2 py-0.5 rounded text-slate-600">All</button>
+            <div id="chartsGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 transition-all duration-300">
+                <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col">
+                    <div class="flex justify-between items-center mb-2 gap-1">
+                        <h3 class="text-xs sm:text-sm font-bold text-slate-700">Profit Before Tax After HOCA</h3>
+                        <div id="ctrl-pbt" class="hidden bg-gray-100 rounded-lg p-0.5 flex text-[9px] sm:text-[10px] font-medium">
+                            <button onclick="setChartRank('pbt', 'TOP')" class="rank-btn px-1.5 sm:px-2 py-0.5 rounded text-slate-600">Top 10</button>
+                            <button onclick="setChartRank('pbt', 'BOTTOM')" class="rank-btn px-1.5 sm:px-2 py-0.5 rounded text-slate-600">Bottom 10</button>
+                            <button onclick="setChartRank('pbt', 'ALL')" class="rank-btn active px-1.5 sm:px-2 py-0.5 rounded text-slate-600">All</button>
                         </div>
                     </div>
                     <div class="chart-wrapper" id="wrap-pbt"><canvas id="pbtChart"></canvas></div>
                 </div>
 
-                <!-- Asset -->
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 gap-1">
-                        <h3 class="text-sm font-bold text-slate-700">Asset Performance</h3>
-                        <div id="ctrl-asset" class="hidden bg-gray-100 rounded-lg p-0.5 flex text-[10px] font-medium">
-                            <button onclick="setChartRank('asset', 'TOP')" class="rank-btn px-2 py-0.5 rounded text-slate-600">Top 10</button>
-                            <button onclick="setChartRank('asset', 'BOTTOM')" class="rank-btn px-2 py-0.5 rounded text-slate-600">Bottom 10</button>
-                            <button onclick="setChartRank('asset', 'ALL')" class="rank-btn active px-2 py-0.5 rounded text-slate-600">All</button>
+                <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col">
+                    <div class="flex justify-between items-center mb-2 gap-1">
+                        <h3 class="text-xs sm:text-sm font-bold text-slate-700">Asset Performance</h3>
+                        <div id="ctrl-asset" class="hidden bg-gray-100 rounded-lg p-0.5 flex text-[9px] sm:text-[10px] font-medium">
+                            <button onclick="setChartRank('asset', 'TOP')" class="rank-btn px-1.5 sm:px-2 py-0.5 rounded text-slate-600">Top 10</button>
+                            <button onclick="setChartRank('asset', 'BOTTOM')" class="rank-btn px-1.5 sm:px-2 py-0.5 rounded text-slate-600">Bottom 10</button>
+                            <button onclick="setChartRank('asset', 'ALL')" class="rank-btn active px-1.5 sm:px-2 py-0.5 rounded text-slate-600">All</button>
                         </div>
                     </div>
                     <div class="chart-wrapper" id="wrap-asset"><canvas id="assetChart"></canvas></div>
                 </div>
                 
-                <!-- CASA -->
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 gap-1">
-                        <h3 class="text-sm font-bold text-slate-700">CASA Analysis</h3>
-                        <div id="ctrl-casa" class="hidden bg-gray-100 rounded-lg p-0.5 flex text-[10px] font-medium">
-                            <button onclick="setChartRank('casa', 'TOP')" class="rank-btn px-2 py-0.5 rounded text-slate-600">Top 10</button>
-                            <button onclick="setChartRank('casa', 'BOTTOM')" class="rank-btn px-2 py-0.5 rounded text-slate-600">Bottom 10</button>
-                            <button onclick="setChartRank('casa', 'ALL')" class="rank-btn active px-2 py-0.5 rounded text-slate-600">All</button>
+                <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col">
+                    <div class="flex justify-between items-center mb-2 gap-1">
+                        <h3 class="text-xs sm:text-sm font-bold text-slate-700">CASA Analysis</h3>
+                        <div id="ctrl-casa" class="hidden bg-gray-100 rounded-lg p-0.5 flex text-[9px] sm:text-[10px] font-medium">
+                            <button onclick="setChartRank('casa', 'TOP')" class="rank-btn px-1.5 sm:px-2 py-0.5 rounded text-slate-600">Top 10</button>
+                            <button onclick="setChartRank('casa', 'BOTTOM')" class="rank-btn px-1.5 sm:px-2 py-0.5 rounded text-slate-600">Bottom 10</button>
+                            <button onclick="setChartRank('casa', 'ALL')" class="rank-btn active px-1.5 sm:px-2 py-0.5 rounded text-slate-600">All</button>
                         </div>
                     </div>
                     <div class="chart-wrapper" id="wrap-casa"><canvas id="casaChart"></canvas></div>
                 </div>
 
-                <!-- FDR -->
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 gap-1">
-                        <h3 class="text-sm font-bold text-slate-700">Financing & FDR Ratio</h3>
-                        <div id="ctrl-fdr" class="hidden bg-gray-100 rounded-lg p-0.5 flex text-[10px] font-medium">
-                            <button onclick="setChartRank('fdr', 'TOP')" class="rank-btn px-2 py-0.5 rounded text-slate-600">Top 10</button>
-                            <button onclick="setChartRank('fdr', 'BOTTOM')" class="rank-btn px-2 py-0.5 rounded text-slate-600">Bottom 10</button>
-                            <button onclick="setChartRank('fdr', 'ALL')" class="rank-btn active px-2 py-0.5 rounded text-slate-600">All</button>
+                <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col">
+                    <div class="flex justify-between items-center mb-2 gap-1">
+                        <h3 class="text-xs sm:text-sm font-bold text-slate-700">Financing & FDR Ratio</h3>
+                        <div id="ctrl-fdr" class="hidden bg-gray-100 rounded-lg p-0.5 flex text-[9px] sm:text-[10px] font-medium">
+                            <button onclick="setChartRank('fdr', 'TOP')" class="rank-btn px-1.5 sm:px-2 py-0.5 rounded text-slate-600">Top 10</button>
+                            <button onclick="setChartRank('fdr', 'BOTTOM')" class="rank-btn px-1.5 sm:px-2 py-0.5 rounded text-slate-600">Bottom 10</button>
+                            <button onclick="setChartRank('fdr', 'ALL')" class="rank-btn active px-1.5 sm:px-2 py-0.5 rounded text-slate-600">All</button>
                         </div>
                     </div>
                     <div class="chart-wrapper" id="wrap-fdr"><canvas id="fdrChart"></canvas></div>
                 </div>
 
-                <!-- FBI -->
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 gap-1">
-                        <h3 class="text-sm font-bold text-slate-700">Fee Based Income</h3>
-                        <div id="ctrl-fbi" class="hidden bg-gray-100 rounded-lg p-0.5 flex text-[10px] font-medium">
-                            <button onclick="setChartRank('fbi', 'TOP')" class="rank-btn px-2 py-0.5 rounded text-slate-600">Top 10</button>
-                            <button onclick="setChartRank('fbi', 'BOTTOM')" class="rank-btn px-2 py-0.5 rounded text-slate-600">Bottom 10</button>
-                            <button onclick="setChartRank('fbi', 'ALL')" class="rank-btn active px-2 py-0.5 rounded text-slate-600">All</button>
+                <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col lg:col-span-2">
+                    <div class="flex justify-between items-center mb-2 gap-1">
+                        <h3 class="text-xs sm:text-sm font-bold text-slate-700">Fee Based Income</h3>
+                        <div id="ctrl-fbi" class="hidden bg-gray-100 rounded-lg p-0.5 flex text-[9px] sm:text-[10px] font-medium">
+                            <button onclick="setChartRank('fbi', 'TOP')" class="rank-btn px-1.5 sm:px-2 py-0.5 rounded text-slate-600">Top 10</button>
+                            <button onclick="setChartRank('fbi', 'BOTTOM')" class="rank-btn px-1.5 sm:px-2 py-0.5 rounded text-slate-600">Bottom 10</button>
+                            <button onclick="setChartRank('fbi', 'ALL')" class="rank-btn active px-1.5 sm:px-2 py-0.5 rounded text-slate-600">All</button>
                         </div>
                     </div>
                     <div class="chart-wrapper" id="wrap-fbi"><canvas id="fbiChart"></canvas></div>
                 </div>
             </div>
 
-            <!-- Detailed Data Table -->
-            <div id="tableSection" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-10">
-                <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                    <h3 class="text-base font-bold text-slate-700">Detailed Data Breakdown</h3>
+            <div id="tableSection" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-8">
+                <div class="p-3 sm:p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                    <h3 class="text-xs sm:text-base font-bold text-slate-700">Detailed Data Breakdown</h3>
                 </div>
                 <div class="overflow-x-auto max-h-[400px]">
                     <table class="w-full text-left border-collapse">
                         <thead class="bg-white sticky top-0 z-10 shadow-sm">
-                            <tr class="text-gray-500 text-xs uppercase tracking-wider border-b border-gray-200">
-                                <th class="p-3 font-bold sticky left-0 bg-white z-20">Branch Name</th>
-                                <th class="p-3 font-bold text-right">PBT Act</th>
-                                <!--
-                                <th class="p-3 font-bold text-right">PBT Tgt</th>
-                                -->
-                                <th class="p-3 font-bold text-right text-red-500">Gap PBT</th>
-                                <th class="p-3 font-bold text-right">Asset Act</th>
-                                <th class="p-3 font-bold text-right">Gap Asset</th>
-                                <th class="p-3 font-bold text-right">CASA %</th>
-                                <th class="p-3 font-bold text-right">Act CASA</th>
-                                <th class="p-3 font-bold text-right">Gap CASA</th>
-                                <th class="p-3 font-bold text-right">COF %</th>
-                                <th class="p-3 font-bold text-right">FDR %</th>
-                                <th class="p-3 font-bold text-right">Act Financing</th>
-                                <th class="p-3 font-bold text-right">Gap Financing</th>
-                                <th class="p-3 font-bold text-right">FBI Act</th>
-                                <th class="p-3 font-bold text-right">Gap FBI</th>
-                                <th class="p-3 font-bold text-center">PPAP/YTD</th>
+                            <tr class="text-gray-500 text-[10px] sm:text-xs uppercase tracking-wider border-b border-gray-200">
+                                <th class="p-2 sm:p-3 font-bold sticky left-0 bg-white z-20 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">Branch Name</th>
+                                <th class="p-2 sm:p-3 font-bold text-right">PBT Act</th>
+                                <th class="p-2 sm:p-3 font-bold text-right text-red-500">Gap PBT</th>
+                                <th class="p-2 sm:p-3 font-bold text-right">Asset Act</th>
+                                <th class="p-2 sm:p-3 font-bold text-right">Gap Asset</th>
+                                <th class="p-2 sm:p-3 font-bold text-right">CASA %</th>
+                                <th class="p-2 sm:p-3 font-bold text-right">Act CASA</th>
+                                <th class="p-2 sm:p-3 font-bold text-right">Gap CASA</th>
+                                <th class="p-2 sm:p-3 font-bold text-right">COF %</th>
+                                <th class="p-2 sm:p-3 font-bold text-right">FDR %</th>
+                                <th class="p-2 sm:p-3 font-bold text-right">Act Financing</th>
+                                <th class="p-2 sm:p-3 font-bold text-right">Gap Financing</th>
+                                <th class="p-2 sm:p-3 font-bold text-right">FBI Act</th>
+                                <th class="p-2 sm:p-3 font-bold text-right">Gap FBI</th>
+                                <th class="p-2 sm:p-3 font-bold text-center">PPAP/YTD</th>
                             </tr>
                         </thead>
-                        <tbody id="tableBody" class="text-xs divide-y divide-gray-100"></tbody>
+                        <tbody id="tableBody" class="text-[10px] sm:text-xs divide-y divide-gray-100"></tbody>
                     </table>
                 </div>
             </div>
@@ -369,16 +349,13 @@
         let chartRanks = { pbt: 'ALL', asset: 'ALL', casa: 'ALL', fdr: 'ALL', fbi: 'ALL' };
         
         // KONFIGURASI DATA JSON DI SINI
-        // ID harus unik, File harus sesuai nama file json Anda
         const jsonFiles = [            
             { id: 'juni', label: 'Juni', file: 'juni26.json'},
             { id: 'juli', label: 'Juli', file: 'juli26.json' }
         ];
 
-        // Set default period ke ID pertama atau spesifik (misal 'juni')
         let currentPeriodId = 'juli'; 
 
-        // Helper untuk membersihkan string format dari JSON ke angka murni (number)
         function parseVal(val) {
             if (typeof val === 'number') return val;
             if (!val) return 0;
@@ -387,10 +364,8 @@
             return isNaN(parsed) ? 0 : parsed;
         }
 
-        // Load data dari JSON secara asinkron berdasarkan periode
         async function loadData(keepBranch = null) {
             try {
-                // Cari konfigurasi file berdasarkan ID yang aktif
                 const config = jsonFiles.find(f => f.id === currentPeriodId);
                 if (!config) throw new Error("Konfigurasi periode tidak ditemukan");
 
@@ -401,7 +376,6 @@
                 
                 const json = await response.json();
                 
-                // Sanitasi data
                 rawData = json.map(d => ({
                     name: d.name ? d.name.trim() : '',
                     pbt: parseVal(d.pbt),
@@ -423,10 +397,8 @@
                     ppap: parseVal(d.ppap)
                 }));
 
-                // Inisialisasi Filter Dropdown
                 initFilter();
 
-                // LOGIKA PEMILIHAN CABANG SAAT GANTI BULAN
                 let targetBranch = 'ALL';
                 if (keepBranch && keepBranch !== 'ALL') {
                     const exists = rawData.some(d => d.name === keepBranch);
@@ -444,22 +416,12 @@
 
             } catch (err) {
                 console.error("Error loading JSON:", err);
-                
-                // --- ERROR HANDLING ---
-                // 1. Tampilkan pesan error
                 alert(err.message);
 
-                // 2. Jika bukan Juni, fallback ke Juni
                 if (currentPeriodId !== 'juni') {
                     console.warn("Fallback ke data Juni karena error...");
-                    
-                    // Ubah state
                     currentPeriodId = 'juni';
-                    
-                    // Update tampilan tombol tab
                     renderTabs();
-                    
-                    // Panggil ulang loadData
                     loadData(keepBranch);
                 }
             }
@@ -470,8 +432,8 @@
                 document.body.classList.add('logged-in');
                 document.getElementById('dashboardContent').classList.remove('hidden');
                 document.body.classList.remove('overflow-hidden');
-                renderTabs(); // Render tabs dulu
-                loadData();   // Lalu load data
+                renderTabs();
+                loadData();
             } else {
                 document.getElementById('loginOverlay').classList.remove('hidden');
             }
@@ -516,19 +478,17 @@
         styleSheet.innerText = `@keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }`;
         document.head.appendChild(styleSheet);
 
-        // --- FUNGSI RENDER TABS DINAMIS ---
         function renderTabs() {
             const container = document.getElementById('tabContainer');
-            container.innerHTML = ''; // Bersihkan container
+            container.innerHTML = ''; 
 
             jsonFiles.forEach(item => {
                 const btn = document.createElement('button');
-                // Tentukan kelas CSS berdasarkan apakah item ini yang aktif
                 const isActive = item.id === currentPeriodId;
                 
                 btn.className = isActive 
-                    ? "px-3 py-1.5 rounded text-xs font-semibold transition-all bg-blue-600 text-white shadow-sm whitespace-nowrap"
-                    : "px-3 py-1.5 rounded text-xs font-semibold transition-all text-slate-400 hover:text-white hover:bg-slate-700 whitespace-nowrap";
+                    ? "px-2.5 sm:px-3 py-1 rounded text-[10px] sm:text-xs font-semibold transition-all bg-blue-600 text-white shadow-sm whitespace-nowrap"
+                    : "px-2.5 sm:px-3 py-1 rounded text-[10px] sm:text-xs font-semibold transition-all text-slate-400 hover:text-white hover:bg-slate-700 whitespace-nowrap";
                 
                 btn.innerText = item.label.toUpperCase() + " 2026";
                 btn.onclick = () => switchData(item.id);
@@ -542,17 +502,10 @@
             
             const currentSelectedBranch = document.getElementById('branchFilter').value;
             currentPeriodId = newPeriodId;
-            
-            // Render ulang tabs untuk memperbarui warna tombol aktif
             renderTabs();
-            
-            // Reset Rank Chart
             Object.keys(chartRanks).forEach(k => chartRanks[k] = 'ALL');
-            
-            // Load Data Baru
             loadData(currentSelectedBranch);
         }
-        // ------------------------------------------
 
         function initFilter() {
             const select = document.getElementById('branchFilter');
@@ -630,14 +583,14 @@
             const wrappers = document.querySelectorAll('.chart-wrapper');
             
             if (isAggregate) {
-                chartsGrid.className = "grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 transition-all duration-300";
+                chartsGrid.className = "grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 transition-all duration-300";
                 wrappers.forEach(w => w.classList.remove('compact'));
                 Object.keys(chartRanks).forEach(key => {
                     chartRanks[key] = 'ALL';
                     updateRankButtons(key);
                 });
             } else {
-                chartsGrid.className = "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6 transition-all duration-300";
+                chartsGrid.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-6 transition-all duration-300";
                 wrappers.forEach(w => w.classList.add('compact'));
             }
 
@@ -697,10 +650,10 @@
             const cofInd = document.getElementById('cofIndicator');
             if(parseFloat(avgCOF) <= 2.30) {
                 cofInd.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
-                document.getElementById('avgCOF').className = "text-sm font-extrabold text-green-700";
+                document.getElementById('avgCOF').className = "text-xs sm:text-sm font-extrabold text-green-700";
             } else {
                 cofInd.innerHTML = '<i class="fa-solid fa-circle-exclamation text-orange-500"></i>';
-                document.getElementById('avgCOF').className = "text-sm font-extrabold text-orange-600";
+                document.getElementById('avgCOF').className = "text-xs sm:text-sm font-extrabold text-orange-600";
             }
 
             document.getElementById('avgFDR').innerText = calcFDR + '%';
@@ -768,7 +721,7 @@
                 const highRisk = data.length - ppapOk;
                 document.getElementById('valPPAP').innerText = highRisk + " Branches";
                 document.getElementById('statusPPAP').innerText = `of ${data.length} branches have issues`;
-                document.getElementById('statusPPAP').className = "text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-600 block text-center";
+                document.getElementById('statusPPAP').className = "text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-600 block text-center";
                 document.getElementById('iconPPAP').innerHTML = highRisk === 0 ? '<i class="fa-solid fa-circle-check text-green-500"></i>' : '<i class="fa-solid fa-circle-exclamation text-red-400"></i>';
 
             } else {
@@ -787,11 +740,11 @@
                 document.getElementById('valPPAP').innerText = (d.ppap || 0) + '%';
                 if(d.ppap > 1) {
                     document.getElementById('statusPPAP').innerText = "WASPADA (>1%)";
-                    document.getElementById('statusPPAP').className = "text-[10px] font-bold px-2 py-0.5 rounded bg-red-100 text-red-700 block text-center";
+                    document.getElementById('statusPPAP').className = "text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded bg-red-100 text-red-700 block text-center";
                     document.getElementById('iconPPAP').innerHTML = '<i class="fa-solid fa-circle-exclamation text-red-500"></i>';
                 } else {
                     document.getElementById('statusPPAP').innerText = "AMAN (<1%)";
-                    document.getElementById('statusPPAP').className = "text-[10px] font-bold px-2 py-0.5 rounded bg-green-100 text-green-700 block text-center";
+                    document.getElementById('statusPPAP').className = "text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded bg-green-100 text-green-700 block text-center";
                     document.getElementById('iconPPAP').innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
                 }
             }
@@ -807,24 +760,21 @@
             tableData.forEach(d => {
                 const row = `
                     <tr class="hover:bg-blue-50 transition-colors border-b border-gray-50">
-                        <td class="p-3 font-medium sticky left-0 bg-white hover:bg-blue-50 text-slate-700">${d.name}</td>
-                        <td class="p-3 text-right ${d.pbt < 0 ? 'text-red-500 font-medium' : 'text-green-600 font-bold'}">${fmt(d.pbt)}</td>
-                        <!--
-                        <td class="p-3 text-right text-slate-400">${fmt(d.tgtPbt)}</td>
-                        -->
-                        <td class="p-3 text-right ${d.pbt - d.tgtPbt < 0 ? 'text-red-500' : 'text-green-600'} font-medium">${fmt(d.pbt - d.tgtPbt)}</td>
-                        <td class="p-3 text-right text-slate-700 font-medium">${fmt(d.asset)}</td>
-                        <td class="p-3 text-right ${d.gapAsset < 0 ? 'text-red-500 font-medium' : 'text-green-600 font-bold'}">${fmt(d.gapAsset)}</td>
-                        <td class="p-3 text-right ${d.casaPct < 60 ? 'text-red-500 font-bold' : 'text-green-600 font-bold'}">${d.casaPct}%</td>
-                        <td class="p-3 text-right text-slate-700 font-medium">${fmt(d.actCasa)}</td>
-                        <td class="p-3 text-right ${d.gapCasa < 0 ? 'text-red-500 font-medium' : 'text-green-600 font-bold'}">${fmt(d.gapCasa)}</td>
-                        <td class="p-3 text-right ${d.cof > 2.30 ? 'text-red-600 font-medium' : 'text-green-600 font-bold'}">${d.cof.toFixed(2)}%</td>
-                        <td class="p-3 text-right ${d.fdrPct < 30 ? 'text-red-500 font-bold' : 'text-green-600 font-bold'}">${d.fdrPct}%</td>
-                        <td class="p-3 text-right text-slate-700 font-medium">${fmt(d.actFinancing)}</td>
-                        <td class="p-3 text-right ${d.gapFinancing < 0 ? 'text-red-500' : 'text-green-600'} font-bold">${fmt(d.gapFinancing)}</td>
-                        <td class="p-3 text-right text-slate-700 font-medium">${fmt(d.fbi)}</td>
-                        <td class="p-3 text-right ${d.gapFbi < 0 ? 'text-red-500 font-medium' : 'text-green-600 font-bold'}">${fmt(d.gapFbi)}</td>
-                        <td class="p-3 text-center"><span class="${d.ppap > 1 ? 'bg-red-100 text-red-700 font-medium' : 'bg-green-50 text-green-700 font-bold'} px-2 py-0.5 rounded text-[12px]">${d.ppap}%</span></td>
+                        <td class="p-2 sm:p-3 font-medium sticky left-0 bg-white hover:bg-blue-50 text-slate-700 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">${d.name}</td>
+                        <td class="p-2 sm:p-3 text-right ${d.pbt < 0 ? 'text-red-500 font-medium' : 'text-green-600 font-bold'}">${fmt(d.pbt)}</td>
+                        <td class="p-2 sm:p-3 text-right ${d.pbt - d.tgtPbt < 0 ? 'text-red-500' : 'text-green-600'} font-medium">${fmt(d.pbt - d.tgtPbt)}</td>
+                        <td class="p-2 sm:p-3 text-right text-slate-700 font-medium">${fmt(d.asset)}</td>
+                        <td class="p-2 sm:p-3 text-right ${d.gapAsset < 0 ? 'text-red-500 font-medium' : 'text-green-600 font-bold'}">${fmt(d.gapAsset)}</td>
+                        <td class="p-2 sm:p-3 text-right ${d.casaPct < 60 ? 'text-red-500 font-bold' : 'text-green-600 font-bold'}">${d.casaPct}%</td>
+                        <td class="p-2 sm:p-3 text-right text-slate-700 font-medium">${fmt(d.actCasa)}</td>
+                        <td class="p-2 sm:p-3 text-right ${d.gapCasa < 0 ? 'text-red-500 font-medium' : 'text-green-600 font-bold'}">${fmt(d.gapCasa)}</td>
+                        <td class="p-2 sm:p-3 text-right ${d.cof > 2.30 ? 'text-red-600 font-medium' : 'text-green-600 font-bold'}">${d.cof.toFixed(2)}%</td>
+                        <td class="p-2 sm:p-3 text-right ${d.fdrPct < 30 ? 'text-red-500 font-bold' : 'text-green-600 font-bold'}">${d.fdrPct}%</td>
+                        <td class="p-2 sm:p-3 text-right text-slate-700 font-medium">${fmt(d.actFinancing)}</td>
+                        <td class="p-2 sm:p-3 text-right ${d.gapFinancing < 0 ? 'text-red-500' : 'text-green-600'} font-bold">${fmt(d.gapFinancing)}</td>
+                        <td class="p-2 sm:p-3 text-right text-slate-700 font-medium">${fmt(d.fbi)}</td>
+                        <td class="p-2 sm:p-3 text-right ${d.gapFbi < 0 ? 'text-red-500 font-medium' : 'text-green-600 font-bold'}">${fmt(d.gapFbi)}</td>
+                        <td class="p-2 sm:p-3 text-center"><span class="${d.ppap > 1 ? 'bg-red-100 text-red-700 font-medium' : 'bg-green-50 text-green-700 font-bold'} px-1.5 py-0.5 rounded text-[10px] sm:text-[12px]">${d.ppap}%</span></td>
                     </tr>
                 `;
                 tbody.innerHTML += row;
@@ -961,8 +911,8 @@
                     tooltip: { backgroundColor: 'rgba(15, 23, 42, 0.9)', titleFont: {size: 10}, bodyFont: {size: 10} }
                 },
                 scales: {
-                    x: { display: !isSingle, grid: { display: false }, ticks: { maxRotation: labelRotation, minRotation: labelRotation, font: {size: 8}, autoSkip: false } },
-                    y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { font: {size: 8}, callback: formatYAxis } }
+                    x: { display: !isSingle, grid: { display: false }, ticks: { maxRotation: labelRotation, minRotation: labelRotation, font: {size: 7}, autoSkip: false } },
+                    y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { font: {size: 7}, callback: formatYAxis } }
                 }
             };
 
@@ -999,8 +949,8 @@
                         ...commonOptions,
                         scales: {
                             x: commonOptions.scales.x,
-                            y: { type: 'linear', position: 'left', ticks: { font: {size: 8}, callback: formatYAxis } },
-                            y1: { type: 'linear', display: !isSingle, position: 'right', min: 0, max: 100, grid: { drawOnChartArea: false }, ticks: {font:{size: 8}} }
+                            y: { type: 'linear', position: 'left', ticks: { font: {size: 7}, callback: formatYAxis } },
+                            y1: { type: 'linear', display: !isSingle, position: 'right', min: 0, max: 100, grid: { drawOnChartArea: false }, ticks: {font:{size: 7}} }
                         }
                     },
                     plugins: [smartLabelsPlugin]
@@ -1021,8 +971,8 @@
                         ...commonOptions,
                         scales: {
                             x: commonOptions.scales.x,
-                            y: { type: 'linear', position: 'left', title: { display: false }, ticks: { font: {size: 8}, callback: formatYAxis } },
-                            y1: { type: 'linear', position: 'right', min: 0, max: 100, title: { display: false }, grid: { drawOnChartArea: false }, ticks: { callback: v => v + '%', font:{size: 8} } }
+                            y: { type: 'linear', position: 'left', title: { display: false }, ticks: { font: {size: 7}, callback: formatYAxis } },
+                            y1: { type: 'linear', position: 'right', min: 0, max: 100, title: { display: false }, grid: { drawOnChartArea: false }, ticks: { callback: v => v + '%', font:{size: 7} } }
                         }
                     },
                     plugins: [smartLabelsPlugin]
@@ -1040,7 +990,6 @@
 
         function updateHeaderTitle() {
             const titleEl = document.getElementById('headerTitle');
-            // Cari label berdasarkan ID periode saat ini
             const config = jsonFiles.find(f => f.id === currentPeriodId);
             const monthName = config ? config.label.toUpperCase() : 'DATA';
             titleEl.innerText = `CONTRIBUTION MARGIN [${monthName} 2026]`;
@@ -1049,8 +998,10 @@
         function updateHeaderSubtitle() {
             const brVal = document.getElementById('branchFilter').value;
             const subtitleEl = document.getElementById('headerSubtitle');
-            if (brVal=='ALL') subtitleEl.innerText = "REGION SUMATERA";
-            else subtitleEl.innerText = brVal;
+            if (subtitleEl) {
+                if (brVal=='ALL') subtitleEl.innerText = "REGION SUMATERA";
+                else subtitleEl.innerText = brVal;
+            }
         }
     </script>
 </body>
