@@ -15,6 +15,8 @@
         .card:hover { transform: translateY(-5px); box-shadow: 0 5px 10px rgba(0,0,0,0.1); }
         
         .chart-wrapper { position: relative; width: 100%; height: 280px; transition: height 0.3s ease; }
+        .chart-wrapper.compact { height: 220px; /* Naikkan dari 195px agar lebih proporsional di grid 4 kolom */
+                               }
         
         @media (max-width: 640px) {
             .chart-wrapper { height: 230px; }
@@ -248,8 +250,11 @@
                 </div>
             </div>
 
-            <div id="chartsGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 transition-all duration-300">
-                <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col">
+            <!-- UBAH GRID MENJADI 3 KOLOM (lg:grid-cols-3) AGAR LEBIH RATA -->
+            <div id="chartsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 transition-all duration-300">
+                
+                <!-- CHART 1: PBT -->
+                <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col h-full">
                     <div class="flex justify-between items-center mb-2 gap-1">
                         <h3 class="text-xs sm:text-sm font-bold text-slate-700">Profit Before Tax After HOCA</h3>
                         <div id="ctrl-pbt" class="hidden bg-gray-100 rounded-lg p-0.5 flex text-[9px] sm:text-[10px] font-medium">
@@ -258,10 +263,11 @@
                             <button onclick="setChartRank('pbt', 'ALL')" class="rank-btn active px-1.5 sm:px-2 py-0.5 rounded text-slate-600">All</button>
                         </div>
                     </div>
-                    <div class="chart-wrapper" id="wrap-pbt"><canvas id="pbtChart"></canvas></div>
+                    <div class="chart-wrapper flex-grow" id="wrap-pbt"><canvas id="pbtChart"></canvas></div>
                 </div>
 
-                <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col">
+                <!-- CHART 2: ASSET -->
+                <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col h-full">
                     <div class="flex justify-between items-center mb-2 gap-1">
                         <h3 class="text-xs sm:text-sm font-bold text-slate-700">Asset Performance</h3>
                         <div id="ctrl-asset" class="hidden bg-gray-100 rounded-lg p-0.5 flex text-[9px] sm:text-[10px] font-medium">
@@ -270,10 +276,11 @@
                             <button onclick="setChartRank('asset', 'ALL')" class="rank-btn active px-1.5 sm:px-2 py-0.5 rounded text-slate-600">All</button>
                         </div>
                     </div>
-                    <div class="chart-wrapper" id="wrap-asset"><canvas id="assetChart"></canvas></div>
+                    <div class="chart-wrapper flex-grow" id="wrap-asset"><canvas id="assetChart"></canvas></div>
                 </div>
                 
-                <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col">
+                <!-- CHART 3: CASA -->
+                <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col h-full">
                     <div class="flex justify-between items-center mb-2 gap-1">
                         <h3 class="text-xs sm:text-sm font-bold text-slate-700">CASA Analysis</h3>
                         <div id="ctrl-casa" class="hidden bg-gray-100 rounded-lg p-0.5 flex text-[9px] sm:text-[10px] font-medium">
@@ -282,10 +289,11 @@
                             <button onclick="setChartRank('casa', 'ALL')" class="rank-btn active px-1.5 sm:px-2 py-0.5 rounded text-slate-600">All</button>
                         </div>
                     </div>
-                    <div class="chart-wrapper" id="wrap-casa"><canvas id="casaChart"></canvas></div>
+                    <div class="chart-wrapper flex-grow" id="wrap-casa"><canvas id="casaChart"></canvas></div>
                 </div>
 
-                <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col">
+                <!-- CHART 4: FDR -->
+                <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col h-full">
                     <div class="flex justify-between items-center mb-2 gap-1">
                         <h3 class="text-xs sm:text-sm font-bold text-slate-700">Financing & FDR Ratio</h3>
                         <div id="ctrl-fdr" class="hidden bg-gray-100 rounded-lg p-0.5 flex text-[9px] sm:text-[10px] font-medium">
@@ -294,10 +302,11 @@
                             <button onclick="setChartRank('fdr', 'ALL')" class="rank-btn active px-1.5 sm:px-2 py-0.5 rounded text-slate-600">All</button>
                         </div>
                     </div>
-                    <div class="chart-wrapper" id="wrap-fdr"><canvas id="fdrChart"></canvas></div>
+                    <div class="chart-wrapper flex-grow" id="wrap-fdr"><canvas id="fdrChart"></canvas></div>
                 </div>
 
-                <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col lg:col-span-2">
+                <!-- CHART 5: FBI (Dihapus lg:col-span-2 agar ukurannya sama dengan chart lain) -->
+                <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col h-full">
                     <div class="flex justify-between items-center mb-2 gap-1">
                         <h3 class="text-xs sm:text-sm font-bold text-slate-700">Fee Based Income</h3>
                         <div id="ctrl-fbi" class="hidden bg-gray-100 rounded-lg p-0.5 flex text-[9px] sm:text-[10px] font-medium">
@@ -306,7 +315,7 @@
                             <button onclick="setChartRank('fbi', 'ALL')" class="rank-btn active px-1.5 sm:px-2 py-0.5 rounded text-slate-600">All</button>
                         </div>
                     </div>
-                    <div class="chart-wrapper" id="wrap-fbi"><canvas id="fbiChart"></canvas></div>
+                    <div class="chart-wrapper flex-grow" id="wrap-fbi"><canvas id="fbiChart"></canvas></div>
                 </div>
             </div>
 
@@ -584,33 +593,23 @@
             const chartsGrid = document.getElementById('chartsGrid');
             const wrappers = document.querySelectorAll('.chart-wrapper');
 
-            /*
+            // GANTI SELURUH BLOK IF/ELSE DI DALAM FUNGSI updateDashboard DENGAN INI:
+            
             if (isAggregate) {
+                // MODE REGION: 2 Kolom, Chart Besar
                 chartsGrid.className = "grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 transition-all duration-300";
                 wrappers.forEach(w => w.classList.remove('compact'));
+                
                 Object.keys(chartRanks).forEach(key => {
                     chartRanks[key] = 'ALL';
                     updateRankButtons(key);
                 });
             } else {
-                chartsGrid.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-6 transition-all duration-300";
+                // MODE SINGLE BRANCH: 4 Kolom (Bukan 5!) agar 4 chart muat di baris 1
+                chartsGrid.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6 transition-all duration-300";
                 wrappers.forEach(w => w.classList.add('compact'));
             }
-            */
-            
-            // GANTI DENGAN KODE SEDERHANA INI SAJA:
-            if (isAggregate) {
-                // Mode Region: Tampilkan Top/Bottom controls, chart normal
-                wrappers.forEach(w => w.classList.remove('compact'));
-                Object.keys(chartRanks).forEach(key => {
-                    chartRanks[key] = 'ALL';
-                    updateRankButtons(key);
-                });
-            } else {
-                // Mode Single Branch: Chart jadi compact, tapi GRID TETAP 6 KOLOM (sesuai HTML di atas)
-                wrappers.forEach(w => w.classList.add('compact'));
-            }
-
+ 
             if (isAggregate) {
                 updateCards(rawData); 
                 renderAllCharts(rawData);
