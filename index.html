@@ -221,10 +221,12 @@
                     <div class="mt-2 pt-2 border-t border-gray-100 text-[9px] sm:text-[10px]">
                         <div class="flex justify-between mb-0.5"><span class="text-gray-500">Target FBI:</span><span id="targetFBI" class="font-semibold">-</span></div>
                         <div class="flex justify-between"><span class="text-gray-500">Gap FBI:</span><span id="gapFBI" class="font-bold">-</span></div>
+                        <!--
                         <div id="countFBI" class="mt-1.5 pt-1.5 border-t border-dashed border-gray-200 hidden">
                             <div class="flex justify-between"><span class="text-green-600">✅ Achieved</span> <span id="cntFbiOk" class="font-bold">0</span></div>
                             <div class="flex justify-between"><span class="text-red-500">⚠️ Failed</span> <span id="cntFbiNo" class="font-bold">0</span></div>
                         </div>
+                        -->
                     </div>
                 </div>
 
@@ -710,11 +712,15 @@
                 document.getElementById('cntFdrNo').innerText = data.length - fdrOk;
                 document.getElementById('iconFDR').innerHTML = parseFloat(calcFDR) >= 30 ? '<i class="fa-solid fa-circle-check text-green-500"></i>' : '<i class="fa-solid fa-circle-exclamation text-orange-500"></i>';
 
+                // Cari blok ini di dalam if(isAggregate) { ... }
                 const fbiOk = data.filter(d => d.fbi >= d.tgtFbi).length;
                 document.getElementById('cntFbiOk').innerText = fbiOk;
                 document.getElementById('cntFbiNo').innerText = data.length - fbiOk;
                 document.getElementById('iconFBI').innerHTML = totalFBI >= totalTgtFBI ? '<i class="fa-solid fa-circle-check text-green-500"></i>' : '<i class="fa-solid fa-circle-exclamation text-red-400"></i>';
-
+                // Tambahkan ini setelah logika iconFBI
+                document.getElementById('countFBI').classList.add('hidden'); // Sembunyikan detail count saat ALL
+                
+                
                 const ppapOk = data.filter(d => d.ppap <= 1).length;
                 document.getElementById('cntPpapOk').innerText = ppapOk;
                 document.getElementById('cntPpapNo').innerText = data.length - ppapOk;
@@ -737,6 +743,8 @@
 
                 document.getElementById('iconFDR').innerHTML = d.fdrPct >= 30 ? '<i class="fa-solid fa-circle-check text-green-500"></i>' : '<i class="fa-solid fa-circle-exclamation text-orange-500"></i>';
                 document.getElementById('iconFBI').innerHTML = d.fbi >= d.tgtFbi ? '<i class="fa-solid fa-circle-check text-green-500"></i>' : '<i class="fa-solid fa-circle-exclamation text-red-400"></i>';
+                // Tambahkan ini di dalam else
+                document.getElementById('countFBI').classList.remove('hidden'); // Tampilkan detail count saat single branch
 
                 document.getElementById('valPPAP').innerText = (d.ppap || 0) + '%';
                 if(d.ppap > 1) {
